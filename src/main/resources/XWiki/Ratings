@@ -12,9 +12,9 @@
 <customClass></customClass>
 <contentAuthor>XWiki.Admin</contentAuthor>
 <creationDate>1223390115000</creationDate>
-<date>1223579538000</date>
-<contentUpdateDate>1223579538000</contentUpdateDate>
-<version>196.1</version>
+<date>1225793884000</date>
+<contentUpdateDate>1225793884000</contentUpdateDate>
+<version>35.1</version>
 <title></title>
 <template></template>
 <defaultTemplate></defaultTemplate>
@@ -111,7 +111,7 @@
 <number>0</number>
 <className>XWiki.JavaScriptExtension</className>
 <property>
-<cache>long</cache>
+<cache>forbid</cache>
 </property>
 <property>
 <code>function setVote(ulel, url, i) 
@@ -165,25 +165,35 @@ function hideMsg(msgdiv, prevmsg)
  }
 }
 
+#if($context.action=="view" &amp;&amp; $doc.space!="XWiki")
 Event.observe(window, 'load', function() 
 { 
-  
-  $$('.star-rating').each(function(el) 
-  {
-    if(! el.hasClassName('locked')) 
+   var url = "$xwiki.getURL('XWiki.Ratings', 'view', 'xpage=plain')" + "&amp;rating=$doc.fullName";
+   new Ajax.Request(url, {
+    method: 'get',
+    onSuccess: function(transport)
     {
-      var url = "$xwiki.getURL("XWiki.Ratings", "view", "xpage=plain")" + "&amp;doc=" + el.up('.rating-wrapper').id.substring(7);
-      var msgdiv = el.up('.rating-container').down('.rating-message');
+        if ($('breadcrumbs')) {
+          Element.insert($('breadcrumbs'), {after: transport.responseText});
+        }
+        $$('.star-rating').each(function(el) 
+        {
+           if(! el.hasClassName('locked')) 
+           {
+              var url = "$xwiki.getURL("XWiki.Ratings", "view", "xpage=plain")" + "&amp;doc=" + el.up('.rating-wrapper').id.substring(7);
+              var msgdiv = el.up('.rating-container').down('.rating-message');
 
-      el.select('a').each(function(astar, i) 
-       {  
-         Event.observe(astar, 'click', setVote(el, url, i + 1));
-         var prevmsg = msgdiv.innerHTML;
-         Event.observe(astar, 'mouseover', showMsg(msgdiv, i));
-         Event.observe(astar, 'mouseout', hideMsg(msgdiv, prevmsg));
-       }); // container 
-     }
-  }); 
+              el.select('a').each(function(astar, i) 
+              {  
+                  Event.observe(astar, 'click', setVote(el, url, i + 1));
+                  var prevmsg = msgdiv.innerHTML;
+                  Event.observe(astar, 'mouseover', showMsg(msgdiv, i));
+                  Event.observe(astar, 'mouseout', hideMsg(msgdiv, prevmsg));
+              }); // container 
+           }
+        }); 
+    } // onSuccess
+  });
 });
 
 </code></property><property><name>Ratings Javascript</name>
@@ -192,7 +202,7 @@ Event.observe(window, 'load', function()
 <parse>1</parse>
 </property>
 <property>
-<use>onDemand</use>
+<use>always</use>
 </property>
 </object>
 <object>
@@ -266,7 +276,7 @@ Event.observe(window, 'load', function()
 <number>0</number>
 <className>XWiki.StyleSheetExtension</className>
 <property>
-<cache>long</cache>
+<cache>default</cache>
 </property>
 <property>
 <code>.star-rating,
@@ -367,7 +377,7 @@ line-height: 25px;
 
 .rating-header, .rating-stars, .rating-message {
 display: inline;  
-float: left;
+float: right;
 clear: none;
 }
 
@@ -383,6 +393,8 @@ line-height: 25px;
 font-size: 10px;
 color: #333;
 font-style: italic;
+right: 5px;
+position: relative;
 }
 
 .login-to-rate {
@@ -393,6 +405,18 @@ font-weight: bold;
 .small {
 height: 20px !important;
 line-height: 20px !important;
+}
+
+.rating-wrapper {
+float: left;
+width: 50%;
+right: 30px;
+position: relative;
+}
+
+#breadcrumbs {
+width: 50%;
+float: left;
 }</code>
 </property>
 <property>
@@ -402,7 +426,7 @@ line-height: 20px !important;
 <parse>1</parse>
 </property>
 <property>
-<use>onDemand</use>
+<use>always</use>
 </property>
 </object>
 <object>
@@ -439,11 +463,12 @@ line-height: 20px !important;
 </property>
 </object>
 <content>#if("$!{request.xpage}" == "plain")
-   #set($rdoc = $xwiki.getDocument($request.doc))
-   #set($vote = $xwiki.parseInt($request.vote))
-   #if($vote &gt; 0 &amp;&amp; $vote &lt;= 5)
-     #set($ok = $xwiki.ratings.setRating($rdoc, $context.user, $vote))
-     #if($ok) 
+  #if("$!{request.vote}" != "")
+    #set($rdoc = $xwiki.getDocument($request.doc))
+    #set($vote = $xwiki.parseInt($request.vote))
+    #if($vote &gt; 0 &amp;&amp; $vote &lt;= 5)
+      #set($ok = $xwiki.ratings.setRating($rdoc, $context.user, $vote))
+      #if($ok) 
         #if("$!{request.method}" != "")
           #set($ar = $xwiki.ratings.getAverageRating($rdoc, $request.method))
         #else
@@ -453,13 +478,18 @@ line-height: 20px !important;
         #set($uservote = $xwiki.ratings.getRating($rdoc, $context.user))
         #set($nbVotes = $ar.nbVotes)
         ${avgvote}-${uservote.vote}-${nbVotes}
-     #else 
+      #else 
         $msg.get("rating.saveexception")
-     #end
-   #elseif($vote == 0)
-     $msg.get("rating.votenotvalid")
-   #else
-     $msg.get("rating.voteoutofbounds")
-   #end
+      #end
+    #elseif($vote == 0)
+      $msg.get("rating.votenotvalid")
+    #else
+      $msg.get("rating.voteoutofbounds")
+    #end
+  #elseif("${request.rating}" != "")
+    #includeMacros("XWiki.RatingsMacros")
+    #set($ratedDoc=$xwiki.getDocument("$request.rating"))
+    #displayFullRating($ratedDoc "")
+  #end
 #end</content>
 </xwikidoc>

@@ -12,9 +12,9 @@
 <customClass></customClass>
 <contentAuthor>XWiki.Admin</contentAuthor>
 <creationDate>1225742161000</creationDate>
-<date>1225742548000</date>
-<contentUpdateDate>1225742548000</contentUpdateDate>
-<version>2.1</version>
+<date>1225791743000</date>
+<contentUpdateDate>1225791743000</contentUpdateDate>
+<version>9.1</version>
 <title></title>
 <template></template>
 <defaultTemplate></defaultTemplate>
@@ -76,7 +76,6 @@
     &lt;div class="rating-message"&gt;#if($nbVotes != "")&lt;span&gt;$nbVotes&lt;/span&gt;&amp;nbsp;$msg.get("rating.votes")#end&lt;/div&gt;
 &lt;/div&gt;
 #end
-
 ###
 ###    Display full ratings UI ( rating ui, number of votes, user's vote)
 ###
@@ -90,16 +89,16 @@
 #set($votes = $ar.nbVotes)
 &lt;div class="rating-wrapper" id="rating-${rdoc.fullName}"&gt;
 #if($xwiki.checkAuth())
- &lt;div class="avg-rating"&gt;#ratingstars($id "" $msg.get("rating.rate") $avgvote $votes false)&lt;/div&gt;
- &lt;div class="user-rating"&gt;#ratingstars("${id}-user" "small" $msg.get("rating.yourvote") $uservote "" true)&lt;/div&gt;
+ &lt;div class="avg-rating"&gt;#ratingstars($id "" "" $avgvote $votes false)&lt;/div&gt;
+## &lt;div class="user-rating"&gt;#ratingstars("${id}-user" "small" $msg.get("rating.yourvote") $uservote "" true)&lt;/div&gt;
 #else
  #set($loginurl = $xwiki.getURL("XWiki.XWikiLogin", "login", "xredirect=$rdoc.getURL()"))
  &lt;div class="avg-rating"&gt;#ratingstars($id "" $msg.get("rating.rate") $avgvote  $votes true)&lt;/div&gt; 
- &lt;div class="login-to-rate"&gt;&lt;a href="$loginurl"&gt;$msg.get("rating.logintorate")&lt;/a&gt;&lt;/div&gt;
+## &lt;div class="login-to-rate"&gt;&lt;a href="$loginurl"&gt;$msg.get("rating.logintorate")&lt;/a&gt;&lt;/div&gt;
 #end
 &lt;/div&gt;
+&lt;div class="clearfloats"&gt;&lt;/div&gt;
 #end
-    
 ###
 ###    Display small ratings UI ( rating ui - display only )
 ###
