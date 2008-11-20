@@ -143,7 +143,6 @@
       }
       else alert(transport.responseText); //TODO proper error handling
 
-      alert(id);
       $(id).down('.rating-message').down('span').innerHTML = nbvotes;
     }
    });
