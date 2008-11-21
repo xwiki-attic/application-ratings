@@ -23,7 +23,7 @@
         <executions>
           <execution>
             <phase>generate-resources</phase>
-            <id>set-application-informations</id>
+            <id>force-sx-use-property</id>
             <goals>
               <goal>transform</goal>
             </goals>
