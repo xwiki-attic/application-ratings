@@ -12,9 +12,9 @@
 <customClass></customClass>
 <contentAuthor>XWiki.Admin</contentAuthor>
 <creationDate>1223390115000</creationDate>
-<date>1227210342000</date>
-<contentUpdateDate>1227210342000</contentUpdateDate>
-<version>43.1</version>
+<date>1227285012000</date>
+<contentUpdateDate>1227285012000</contentUpdateDate>
+<version>53.1</version>
 <title></title>
 <template></template>
 <defaultTemplate></defaultTemplate>
@@ -186,18 +186,8 @@ function setRatingsActivation() {
    });
 }
 
-function injectRatingsCategory() {
-  Element.insert($("admin-icons"), {bottom: "&lt;li class='Ratings'&gt;&lt;a href=\"$xwiki.getURL('XWiki.XWikiPreferences','admin','editor=globaladmin&amp;section=Ratings')\"&gt;Ratings&lt;/a&gt;&lt;/li&gt;"});
-}
-
-Event.observe(window, 'load', function() 
+document.observe("dom:loaded", function() 
 { 
-  if ($("admin-icons")) {  // In administration
-      injectRatingsCategory();
-  }
- 
-  else {
-
    // This is a hack to find out which is the current document rendered.
    // We cannot rely on velocity $doc since JSX are rendered in their own request, 
    // thus in the context of their own document.
@@ -239,7 +229,6 @@ Event.observe(window, 'load', function()
       } // onSuccess
     });
   } // docSpace
- } // Not administration
 });</code>
 </property>
 <property>
@@ -249,7 +238,7 @@ Event.observe(window, 'load', function()
 <parse>1</parse>
 </property>
 <property>
-<use>onDemand</use>
+<use>always</use>
 </property>
 </object>
 <object>
@@ -389,17 +378,7 @@ Event.observe(window, 'load', function()
 <cache>default</cache>
 </property>
 <property>
-<code>/* administration ratings category */
-#admin-icons li.Ratings a {
-background-image:url($xwiki.getDocument("XWiki.AdminRatingsSheet").getAttachmentURL("ratings.png"));
-}
-#ratingsactivation fieldset p label {
-  float:none;
-}
-#ratingsactivation .bottombuttons {
-  text-align: left;
-}
-/* ratings */
+<code>/* ratings */
 .star-rating,
 .star-rating a:hover,
 .star-rating a:active,
@@ -547,7 +526,7 @@ float: left;
 <parse>1</parse>
 </property>
 <property>
-<use>onDemand</use>
+<use>always</use>
 </property>
 </object>
 <object>
