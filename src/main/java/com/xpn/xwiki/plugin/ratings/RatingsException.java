@@ -21,8 +21,13 @@ package com.xpn.xwiki.plugin.ratings;
 
 import com.xpn.xwiki.XWikiException;
 
+/**
+ * @version $Id: $
+ */
 public class RatingsException extends XWikiException
 {
+    private static final long serialVersionUID = 1L;
+
     public static final int MODULE_PLUGIN_RATINGS = 1120;
 
     public static final int ERROR_RATINGS_CREATECONTAINER_NULLSPACE = 1120001;

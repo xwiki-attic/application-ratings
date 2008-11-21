@@ -1,5 +1,3 @@
-package com.xpn.xwiki.plugin.ratings;
-
 /*
  * See the NOTICE file distributed with this work for additional
  * information regarding copyright ownership.
@@ -19,6 +17,7 @@ package com.xpn.xwiki.plugin.ratings;
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package com.xpn.xwiki.plugin.ratings;
 
 import com.xpn.xwiki.plugin.comments.Container;
 import com.xpn.xwiki.objects.BaseObject;
@@ -26,62 +25,81 @@ import com.xpn.xwiki.XWikiContext;
 
 import java.util.Date;
 
+/**
+ * Represent a rating : a note given by a user to a container. A container can be :
+ * <ul>
+ * <li>A Wiki Document</li>
+ * <li>A section of a wiki document</li>
+ * <li>A sentence in a wiki document</li>
+ * <li>A comment</li>
+ * <li>A sentence in a comment</li>
+ * <li>etc...</li>
+ * </ul>
+ * 
+ * @version $Id: $
+ */
 public interface Rating
 {
     /**
-     * Retrieves the container to which this rating applies
-     * This can be a page, a rating, or something else
+     * Retrieves the container to which this rating applies This can be a page, a rating, or something else
+     * 
      * @return Container parent container
      */
     Container getContainer();
 
     /**
-     * Retrives the current rating as a BaseObject
-     * This method is used for compatiblity
+     * Retrives the current rating as a BaseObject This method is used for compatiblity
+     * 
      * @return BaseObject rating object
      * @throws RatingsException
      */
     BaseObject getAsObject() throws RatingsException;
 
-
     /**
      * Allows to access the ratings manager used to manage this rating
+     * 
      * @return RatingsManager ratings manager
      */
     RatingsManager getRatingsManager();
 
     /**
      * Retrieves the rating unique ID allowing to distinguish it from other ratings of the same container
-     * @return  String rating ID
+     * 
+     * @return String rating ID
      */
     String getRatingId();
 
     /**
      * Retrieves the rating unique ID allowing to find the rating
-     * @return  String rating ID
+     * 
+     * @return String rating ID
      */
     String getGlobalRatingId();
 
     /**
      * Retrives the current rating author
+     * 
      * @return String author of the rating
      */
     String getAuthor();
 
     /**
      * Retrieves the date of the rating
+     * 
      * @return Date date of the rating
      */
     Date getDate();
 
     /**
      * Retrieves the rating value
+     * 
      * @return int value of rating
      */
     int getVote();
 
     /**
      * Retrieves additional properties
+     * 
      * @param propertyName
      * @return Object property value
      */
@@ -89,6 +107,7 @@ public interface Rating
 
     /**
      * Retrieves additional properties
+     * 
      * @param propertyName
      * @return Object property value
      */

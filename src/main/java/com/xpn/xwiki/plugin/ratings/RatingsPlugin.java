@@ -1,5 +1,3 @@
-package com.xpn.xwiki.plugin.ratings;
-
 /*
  * See the NOTICE file distributed with this work for additional
  * information regarding copyright ownership.
@@ -19,12 +17,12 @@ package com.xpn.xwiki.plugin.ratings;
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package com.xpn.xwiki.plugin.ratings;
+
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import com.xpn.xwiki.plugin.ratings.internal.AbstractRatingsManager;
-import com.xpn.xwiki.plugin.ratings.internal.DefaultRatingsManager;
 
 import com.xpn.xwiki.XWikiContext;
 import com.xpn.xwiki.api.Api;
@@ -32,12 +30,11 @@ import com.xpn.xwiki.doc.XWikiDocument;
 import com.xpn.xwiki.plugin.XWikiDefaultPlugin;
 import com.xpn.xwiki.plugin.XWikiPluginInterface;
 import com.xpn.xwiki.plugin.comments.Container;
-import com.xpn.xwiki.plugin.comments.CommentsManager;
-import com.xpn.xwiki.plugin.comments.internal.DefaultCommentsManager;
+import com.xpn.xwiki.plugin.ratings.internal.DefaultRatingsManager;
 
-
-import java.util.List;
-
+/**
+ * @version $Id: $
+ */
 public class RatingsPlugin extends XWikiDefaultPlugin
 {
     private static Log LOG = LogFactory.getLog(RatingsPlugin.class);
@@ -45,7 +42,7 @@ public class RatingsPlugin extends XWikiDefaultPlugin
     private final static Object RATINGS_MANAGER_LOCK = new Object();
 
     public static final String RATINGS_PLUGIN_NAME = "ratings";
-    
+
     private RatingsManager ratingsManager;
 
     public RatingsPlugin(String name, String className, XWikiContext context)
@@ -80,16 +77,17 @@ public class RatingsPlugin extends XWikiDefaultPlugin
             if (this.ratingsManager == null) {
                 String ratingsManagerClass;
                 ratingsManagerClass =
-                        context.getWiki().Param("xwiki.ratings.ratingsmanager", "com.xpn.xwiki.plugin.ratings.internal.DefaultRatingsManager");
+                    context.getWiki().Param("xwiki.ratings.ratingsmanager",
+                        "com.xpn.xwiki.plugin.ratings.internal.DefaultRatingsManager");
 
                 if (LOG.isDebugEnabled())
-                      LOG.debug("Init comments manager with class " + ratingsManagerClass);
+                    LOG.debug("Init comments manager with class " + ratingsManagerClass);
 
                 try {
                     this.ratingsManager = (RatingsManager) Class.forName(ratingsManagerClass).newInstance();
                 } catch (Exception e) {
                     if (LOG.isErrorEnabled())
-                     LOG.error("Could not init ragints manager for class " + ratingsManagerClass, e);
+                        LOG.error("Could not init ragints manager for class " + ratingsManagerClass, e);
                     this.ratingsManager = new DefaultRatingsManager();
                 }
             }
@@ -98,11 +96,10 @@ public class RatingsPlugin extends XWikiDefaultPlugin
         return this.ratingsManager;
     }
 
-
     public void init(XWikiContext context)
     {
         try {
-           getRatingsManager(context).init(context);
+            getRatingsManager(context).init(context);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -122,47 +119,57 @@ public class RatingsPlugin extends XWikiDefaultPlugin
         this.ratingsManager = ratingsManager;
     }
 
-
-
-    public List<Rating> getRatings(XWikiDocument doc, int start, int count, boolean asc, XWikiContext context) throws RatingsException {
+    public List<Rating> getRatings(XWikiDocument doc, int start, int count, boolean asc, XWikiContext context)
+        throws RatingsException
+    {
         Container container = getRatingsManager(context).newContainer(context);
         container.setDocumentName(doc.getFullName());
         return getRatingsManager(context).getRatings(container, start, count, asc, context);
     }
 
-    public Rating setRating(XWikiDocument doc, String author, int vote, XWikiContext context) throws RatingsException {
+    public Rating setRating(XWikiDocument doc, String author, int vote, XWikiContext context) throws RatingsException
+    {
         Container container = getRatingsManager(context).newContainer(context);
         container.setDocumentName(doc.getFullName());
         return getRatingsManager(context).setRating(container, author, vote, context);
     }
 
-    public Rating getRating(XWikiDocument doc, String author, XWikiContext context) throws RatingsException {
+    public Rating getRating(XWikiDocument doc, String author, XWikiContext context) throws RatingsException
+    {
         Container container = getRatingsManager(context).newContainer(context);
         container.setDocumentName(doc.getFullName());
         return getRatingsManager(context).getRating(container, author, context);
     }
 
-    public AverageRating getAverageRating(XWikiDocument doc, String method, XWikiContext context) throws RatingsException {
+    public AverageRating getAverageRating(XWikiDocument doc, String method, XWikiContext context)
+        throws RatingsException
+    {
         Container container = getRatingsManager(context).newContainer(context);
         container.setDocumentName(doc.getFullName());
         return getRatingsManager(context).getAverageRating(container, method, context);
     }
 
-    public AverageRating getAverageRating(XWikiDocument doc, XWikiContext context) throws RatingsException {
+    public AverageRating getAverageRating(XWikiDocument doc, XWikiContext context) throws RatingsException
+    {
         Container container = getRatingsManager(context).newContainer(context);
         container.setDocumentName(doc.getFullName());
         return getRatingsManager(context).getAverageRating(container, context);
     }
 
-    public AverageRating getAverageRating(String fromsql, String wheresql, String method, XWikiContext context) throws RatingsException {
+    public AverageRating getAverageRating(String fromsql, String wheresql, String method, XWikiContext context)
+        throws RatingsException
+    {
         return getRatingsManager(context).getAverageRating(fromsql, wheresql, method, context);
     }
 
-    public AverageRating getAverageRating(String fromsql, String wheresql, XWikiContext context) throws RatingsException {
+    public AverageRating getAverageRating(String fromsql, String wheresql, XWikiContext context)
+        throws RatingsException
+    {
         return getRatingsManager(context).getAverageRating(fromsql, wheresql, context);
     }
 
-    public AverageRating getUserReputation(String username, XWikiContext context) throws RatingsException {
+    public AverageRating getUserReputation(String username, XWikiContext context) throws RatingsException
+    {
         return getRatingsManager(context).getUserReputation(username, context);
     }
 

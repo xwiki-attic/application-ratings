@@ -1,63 +1,93 @@
+/*
+ * See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
 package com.xpn.xwiki.plugin.ratings.internal;
 
+import com.xpn.xwiki.XWikiContext;
+import com.xpn.xwiki.plugin.comments.Container;
 import com.xpn.xwiki.plugin.ratings.AverageRating;
 import com.xpn.xwiki.plugin.ratings.RatingsException;
-import com.xpn.xwiki.plugin.comments.Container;
-import com.xpn.xwiki.XWikiContext;
 
 /**
- * Created by IntelliJ IDEA.
- * User: ludovic
- * Date: 21 sept. 2008
- * Time: 23:46:21
- * To change this template use File | Settings | File Templates.
+ * @version $Id: $
+ * @see AverageRating
  */
-public class MemoryAverageRating implements AverageRating {
+public class MemoryAverageRating implements AverageRating
+{
 
     private Container container;
+
     private int nbVotes;
+
     private float averageVote;
+
     private String method;
 
-    public MemoryAverageRating(Container container, int nbVotes, float averageVote, String method) {
+    public MemoryAverageRating(Container container, int nbVotes, float averageVote, String method)
+    {
         this.container = container;
         this.nbVotes = nbVotes;
         this.averageVote = averageVote;
         this.method = method;
     }
 
-    public Container getContainer() {
+    public Container getContainer()
+    {
         return container;
     }
 
-    public void setContainer(Container container) {
+    public void setContainer(Container container)
+    {
         this.container = container;
     }
 
-    public int getNbVotes() {
+    public int getNbVotes()
+    {
         return nbVotes;
     }
 
-    public void setNbVotes(int nbVotes) {
+    public void setNbVotes(int nbVotes)
+    {
         this.nbVotes = nbVotes;
     }
 
-    public float getAverageVote() {
+    public float getAverageVote()
+    {
         return averageVote;
     }
 
-    public void setAverageVote(float averageVote) {
+    public void setAverageVote(float averageVote)
+    {
         this.averageVote = averageVote;
     }
 
-    public String getMethod() {
+    public String getMethod()
+    {
         return method;
     }
 
-    public void setMethod(String method) {
+    public void setMethod(String method)
+    {
         this.method = method;
     }
 
-    public void save(XWikiContext context) throws RatingsException {       
+    public void save(XWikiContext context) throws RatingsException
+    {
     }
 }

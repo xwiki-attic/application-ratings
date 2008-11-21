@@ -21,12 +21,16 @@ package com.xpn.xwiki.plugin.ratings;
 
 import com.xpn.xwiki.XWikiException;
 
+/**
+ * @version $Id: $
+ */
 public class ReputationException extends RatingsException
 {
+    private static final long serialVersionUID = 1L;
+
     public static final int MODULE_PLUGIN_RATINGS_REPUTATION = 1121;
 
     public static final int ERROR_REPUTATION_NOT_IMPLEMENTED = 1121001;
-
 
     public ReputationException()
     {

@@ -1,72 +1,91 @@
+/*
+ * See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
 package com.xpn.xwiki.plugin.ratings.internal;
-
-
-import com.xpn.xwiki.plugin.comments.Container;
-import com.xpn.xwiki.plugin.ratings.Rating;
-import com.xpn.xwiki.plugin.ratings.RatingsManager;
-import com.xpn.xwiki.plugin.ratings.RatingsPlugin;
-import com.xpn.xwiki.plugin.ratings.RatingsException;
-import com.xpn.xwiki.XWikiContext;
-import com.xpn.xwiki.XWikiException;
-import com.xpn.xwiki.objects.BaseObject;
-import com.xpn.xwiki.objects.BaseProperty;
-import com.xpn.xwiki.doc.XWikiDocument;
 
 import java.util.Date;
 
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import com.xpn.xwiki.XWikiContext;
+import com.xpn.xwiki.XWikiException;
+import com.xpn.xwiki.doc.XWikiDocument;
+import com.xpn.xwiki.objects.BaseObject;
+import com.xpn.xwiki.objects.BaseProperty;
+import com.xpn.xwiki.plugin.comments.Container;
+import com.xpn.xwiki.plugin.ratings.Rating;
+import com.xpn.xwiki.plugin.ratings.RatingsException;
+import com.xpn.xwiki.plugin.ratings.RatingsManager;
+import com.xpn.xwiki.plugin.ratings.RatingsPlugin;
 
 /**
- * Created by IntelliJ IDEA.
- * User: ludovic
- * Date: 22 sept. 2008
- * Time: 13:25:09
- * To change this template use File | Settings | File Templates.
+ * @version $Id: $
+ * @see Rating
  */
-public class SeparatePageRating implements Rating {
-    private static Log LOG = LogFactory.getLog(SeparatePageRating.class);
-
+public class SeparatePageRating implements Rating
+{
     private Container container;
 
     private XWikiDocument document;
 
     private XWikiContext context;
 
-    public SeparatePageRating(Container container, String author, int vote, XWikiContext context) throws RatingsException
+    public SeparatePageRating(Container container, String author, int vote, XWikiContext context)
+        throws RatingsException
     {
         this(container, author, new Date(), vote, context);
     }
 
-    public SeparatePageRating(Container container, String author, Date date,  int vote, XWikiContext context) throws RatingsException
+    public SeparatePageRating(Container container, String author, Date date, int vote, XWikiContext context)
+        throws RatingsException
     {
         this.container = container;
         this.context = context;
         this.document = addDocument(container, author, date, vote);
     }
 
-    public SeparatePageRating(Container container, XWikiDocument doc, XWikiContext context)  throws RatingsException
+    public SeparatePageRating(Container container, XWikiDocument doc, XWikiContext context) throws RatingsException
     {
         this.container = container;
         this.context = context;
         this.document = doc;
     }
 
-    public SeparatePageRatingsManager getRatingsManager() {
-        return (SeparatePageRatingsManager) ((RatingsPlugin) context.getWiki().getPlugin(RatingsPlugin.RATINGS_PLUGIN_NAME, context)).getRatingsManager(context);
+    public SeparatePageRatingsManager getRatingsManager()
+    {
+        return (SeparatePageRatingsManager) ((RatingsPlugin) context.getWiki().getPlugin(
+            RatingsPlugin.RATINGS_PLUGIN_NAME, context)).getRatingsManager(context);
     }
 
-
     /**
-     * RatingId represent the ID of the rating
-     * In this case it is the page name
+     * RatingId represent the ID of the rating In this case it is the page name
+     * 
      * @return
      */
-    public String getRatingId() {
+    public String getRatingId()
+    {
         return getDocument().getFullName();
     }
 
-    public String getGlobalRatingId() {
+    public String getGlobalRatingId()
+    {
         return getRatingId();
     }
 
@@ -75,8 +94,9 @@ public class SeparatePageRating implements Rating {
         return getDocument().getObject(getRatingsManager().getRatingsClassName(context));
     }
 
-    public XWikiDocument getDocument() {
-        if (document==null) {
+    public XWikiDocument getDocument()
+    {
+        if (document == null) {
             try {
                 document = context.getWiki().getDocument(getPageName(container, context), context);
             } catch (XWikiException e) {
@@ -88,7 +108,7 @@ public class SeparatePageRating implements Rating {
 
     /**
      * {@inheritDoc}
-     *
+     * 
      * @see com.xpn.xwiki.plugin.ratings.Rating#getAuthor()
      */
     public String getAuthor()
@@ -96,14 +116,15 @@ public class SeparatePageRating implements Rating {
         return getAsObject().getStringValue(RatingsManager.RATING_CLASS_FIELDNAME_AUTHOR);
     }
 
-    public Date getDate() {
+    public Date getDate()
+    {
 
         return getAsObject().getDateValue(RatingsManager.RATING_CLASS_FIELDNAME_DATE);
     }
 
     /**
      * {@inheritDoc}
-     *
+     * 
      * @see com.xpn.xwiki.plugin.ratings.Rating#setAuthor(String)
      */
     public void setAuthor(String author)
@@ -111,13 +132,14 @@ public class SeparatePageRating implements Rating {
         getAsObject().setStringValue(RatingsManager.RATING_CLASS_FIELDNAME_AUTHOR, author);
     }
 
-    public void setDate(Date date) {
+    public void setDate(Date date)
+    {
         getAsObject().setDateValue(RatingsManager.RATING_CLASS_FIELDNAME_DATE, date);
     }
 
     /**
      * {@inheritDoc}
-     *
+     * 
      * @see com.xpn.xwiki.plugin.ratings.Rating#getVote()
      */
     public int getVote()
@@ -125,10 +147,9 @@ public class SeparatePageRating implements Rating {
         return getAsObject().getIntValue(RatingsManager.RATING_CLASS_FIELDNAME_VOTE);
     }
 
-
     /**
      * {@inheritDoc}
-     *
+     * 
      * @see com.xpn.xwiki.plugin.ratings.Rating#setVote(int)
      */
     public void setVote(int vote)
@@ -138,31 +159,31 @@ public class SeparatePageRating implements Rating {
 
     /**
      * {@inheritDoc}
-     *
+     * 
      * @see com.xpn.xwiki.plugin.ratings.Rating#get(String)
      */
     public Object get(String propertyName)
     {
         try {
-            return ((BaseProperty)getAsObject().get(propertyName)).getValue();
+            return ((BaseProperty) getAsObject().get(propertyName)).getValue();
         } catch (XWikiException e) {
             return null;
         }
     }
 
-
     /**
      * {@inheritDoc}
-     *
+     * 
      * @see com.xpn.xwiki.plugin.ratings.Rating#display(String,String,XWikiContext)
      */
-    public String display(String propertyName, String mode, XWikiContext context) {
+    public String display(String propertyName, String mode, XWikiContext context)
+    {
         return document.display(propertyName, mode, getAsObject(), context);
     }
 
     /**
      * {@inheritDoc}
-     *
+     * 
      * @see com.xpn.xwiki.plugin.ratings.Rating#getContainer()
      */
     public Container getContainer()
@@ -170,10 +191,9 @@ public class SeparatePageRating implements Rating {
         return container;
     }
 
-
     /**
      * {@inheritDoc}
-     *
+     * 
      * @see com.xpn.xwiki.plugin.ratings.Rating#save()
      */
     public void save() throws RatingsException
@@ -188,9 +208,10 @@ public class SeparatePageRating implements Rating {
             // This should not be handled there, since it is not the responsibility of this plugin to decide if
             // the content has actually been changed or not since current revision, but the implementation of
             // this in XWiki core is wrong. See http://jira.xwiki.org/jira/XWIKI-2800 for more details.
-            // There is a draw-back to doing this, being that if the document content is being changed before 
+            // There is a draw-back to doing this, being that if the document content is being changed before
             // the document is rated, the contentUpdateDate will not be modified. Although possible, this is very
-            // unlikely to happen, or to be a use case. The default rating application will use an asynchronous service to
+            // unlikely to happen, or to be a use case. The default rating application will use an asynchronous service
+            // to
             // note a document, which service will only set the rating, so the behavior will be correct.
             document.setContentDirty(false);
             context.getWiki().saveDocument(getDocument(), context);
@@ -201,7 +222,7 @@ public class SeparatePageRating implements Rating {
 
     /**
      * {@inheritDoc}
-     *
+     * 
      * @see com.xpn.xwiki.plugin.ratings.Rating#remove()
      */
     public boolean remove() throws RatingsException
@@ -217,25 +238,31 @@ public class SeparatePageRating implements Rating {
     }
 
     /**
-     * Generate page name from the container page
-     * We add Rating and getUniquePageName will add us a counter to our page
+     * Generate page name from the container page We add Rating and getUniquePageName will add us a counter to our page
+     * 
      * @param container
      * @return
      */
-    private String getPageName(Container container, XWikiContext context) throws XWikiException {
+    private String getPageName(Container container, XWikiContext context) throws XWikiException
+    {
         XWikiDocument doc = context.getWiki().getDocument(container.getDocumentName(), context);
         String ratingsSpace = getRatingsManager().getRatingsSpaceName(context);
         boolean hasRatingsSpaceForeachSpace = getRatingsManager().hasRatingsSpaceForeachSpace(context);
         if (hasRatingsSpaceForeachSpace)
-            return doc.getSpace() + ratingsSpace + "." + context.getWiki().getUniquePageName(ratingsSpace, doc.getName(), "R", true, context);
-        else if (ratingsSpace==null)
-            return doc.getSpace() + "." + context.getWiki().getUniquePageName(doc.getSpace(), doc.getName() + "R", "", true, context);
+            return doc.getSpace() + ratingsSpace + "."
+                + context.getWiki().getUniquePageName(ratingsSpace, doc.getName(), "R", true, context);
+        else if (ratingsSpace == null)
+            return doc.getSpace() + "."
+                + context.getWiki().getUniquePageName(doc.getSpace(), doc.getName() + "R", "", true, context);
         else {
-            return ratingsSpace + "."  + context.getWiki().getUniquePageName(ratingsSpace, doc.getSpace() + "_" + doc.getName(), "R", true, context);
+            return ratingsSpace
+                + "."
+                + context.getWiki().getUniquePageName(ratingsSpace, doc.getSpace() + "_" + doc.getName(), "R", true,
+                    context);
         }
     }
 
-    private XWikiDocument addDocument(Container container, String author, Date date, int  vote) throws RatingsException
+    private XWikiDocument addDocument(Container container, String author, Date date, int vote) throws RatingsException
     {
         try {
             String ratingsClassName = getRatingsManager().getRatingsClassName(context);
@@ -250,7 +277,7 @@ public class SeparatePageRating implements Rating {
             obj.setStringValue(RatingsManager.RATING_CLASS_FIELDNAME_AUTHOR, author);
             obj.setDateValue(RatingsManager.RATING_CLASS_FIELDNAME_DATE, date);
             obj.setIntValue(RatingsManager.RATING_CLASS_FIELDNAME_VOTE, vote);
-            obj.setStringValue(RatingsManager.RATING_CLASS_FIELDNAME_PARENT,parentDocName);
+            obj.setStringValue(RatingsManager.RATING_CLASS_FIELDNAME_PARENT, parentDocName);
             doc.addObject(ratingsClassName, obj);
             doc.setContent("#includeForm(\"XWiki.XWikiRatingSheet\")");
             return doc;

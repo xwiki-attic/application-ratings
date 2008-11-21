@@ -17,29 +17,27 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package com.xpn.xwiki.plugin.ratings.internal;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.util.Date;
 
 import com.xpn.xwiki.XWikiContext;
 import com.xpn.xwiki.XWikiException;
 import com.xpn.xwiki.doc.XWikiDocument;
 import com.xpn.xwiki.objects.BaseObject;
 import com.xpn.xwiki.objects.BaseProperty;
+import com.xpn.xwiki.plugin.comments.Container;
 import com.xpn.xwiki.plugin.ratings.Rating;
+import com.xpn.xwiki.plugin.ratings.RatingsException;
 import com.xpn.xwiki.plugin.ratings.RatingsManager;
 import com.xpn.xwiki.plugin.ratings.RatingsPlugin;
-import com.xpn.xwiki.plugin.ratings.RatingsException;
-import com.xpn.xwiki.plugin.comments.Container;
 
-import java.util.*;
-
+/**
+ * @version
+ * @see Rating
+ */
 public class DefaultRating implements Rating
 {
-    private static Log LOG = LogFactory.getLog(DefaultRating.class);
-
     private Container container;
 
     private XWikiDocument document;
@@ -53,8 +51,7 @@ public class DefaultRating implements Rating
         this(container, author, new Date(), vote, context);
     }
 
-    public DefaultRating(Container container, String author, Date date, int vote,
-                          XWikiContext context)
+    public DefaultRating(Container container, String author, Date date, int vote, XWikiContext context)
     {
         this.container = container;
         this.context = context;
@@ -70,32 +67,36 @@ public class DefaultRating implements Rating
         this.container = container;
     }
 
-    public RatingsManager getRatingsManager() {
-        return ((RatingsPlugin) context.getWiki().getPlugin(RatingsPlugin.RATINGS_PLUGIN_NAME, context)).getRatingsManager(context);
+    public RatingsManager getRatingsManager()
+    {
+        return ((RatingsPlugin) context.getWiki().getPlugin(RatingsPlugin.RATINGS_PLUGIN_NAME, context))
+            .getRatingsManager(context);
     }
 
     /**
      * RatingId represente the rating ID. It is the object number in the default ratings case
      */
-    public String getRatingId() {
+    public String getRatingId()
+    {
         return "" + object.getNumber();
     }
 
     /**
      * RatingId represente the rating ID. It is the object number in the default ratings case
      */
-    public String getGlobalRatingId() {
+    public String getGlobalRatingId()
+    {
         return document.getFullName() + ":" + object.getNumber();
     }
-
 
     public BaseObject getAsObject()
     {
         return object;
     }
 
-    public XWikiDocument getDocument() throws XWikiException {
-        if (document==null) {
+    public XWikiDocument getDocument() throws XWikiException
+    {
+        if (document == null) {
             document = context.getWiki().getDocument(container.getDocumentName(), context);
         }
         return document;
@@ -103,7 +104,7 @@ public class DefaultRating implements Rating
 
     /**
      * {@inheritDoc}
-     *
+     * 
      * @see com.xpn.xwiki.plugin.ratings.Rating#getAuthor()
      */
     public String getAuthor()
@@ -111,13 +112,14 @@ public class DefaultRating implements Rating
         return object.getStringValue(RatingsManager.RATING_CLASS_FIELDNAME_AUTHOR);
     }
 
-    public void setAuthor(String author) {
+    public void setAuthor(String author)
+    {
         object.setStringValue(RatingsManager.RATING_CLASS_FIELDNAME_AUTHOR, author);
     }
 
     /**
      * {@inheritDoc}
-     *
+     * 
      * @see com.xpn.xwiki.plugin.ratings.Rating#getDate()
      */
     public Date getDate()
@@ -125,14 +127,14 @@ public class DefaultRating implements Rating
         return object.getDateValue(RatingsManager.RATING_CLASS_FIELDNAME_DATE);
     }
 
-
-    public void setDate(Date date) {
+    public void setDate(Date date)
+    {
         object.setDateValue(RatingsManager.RATING_CLASS_FIELDNAME_DATE, date);
     }
 
     /**
      * {@inheritDoc}
-     *
+     * 
      * @see com.xpn.xwiki.plugin.ratings.Rating#getVote()
      */
     public int getVote()
@@ -140,37 +142,38 @@ public class DefaultRating implements Rating
         return object.getIntValue(RatingsManager.RATING_CLASS_FIELDNAME_VOTE);
     }
 
-    public void setVote(int vote ) {
+    public void setVote(int vote)
+    {
         object.setIntValue("vote", vote);
     }
 
-
     /**
      * {@inheritDoc}
-     *
+     * 
      * @see com.xpn.xwiki.plugin.ratings.Rating#get(String)
      */
-    public Object get(String propertyName) {
+    public Object get(String propertyName)
+    {
         try {
-            return ((BaseProperty)getAsObject().get(propertyName)).getValue();
+            return ((BaseProperty) getAsObject().get(propertyName)).getValue();
         } catch (XWikiException e) {
             return null;
         }
     }
 
-
     /**
      * {@inheritDoc}
-     *
+     * 
      * @see com.xpn.xwiki.plugin.ratings.Rating#display(String,String, com.xpn.xwiki.XWikiContext)
      */
-    public String display(String propertyName, String mode, XWikiContext context) {
+    public String display(String propertyName, String mode, XWikiContext context)
+    {
         return document.display(propertyName, mode, object, context);
     }
 
     /**
      * {@inheritDoc}
-     *
+     * 
      * @see com.xpn.xwiki.plugin.ratings.Rating#getContainer()
      */
     public Container getContainer()
@@ -178,15 +181,17 @@ public class DefaultRating implements Rating
         return container;
     }
 
-    public void save() throws RatingsException {
+    public void save() throws RatingsException
+    {
         try {
             // Force content dirty to false, so that the content update date is not changed when saving the document.
             // This should not be handled there, since it is not the responsibility of this plugin to decide if
             // the content has actually been changed or not since current revision, but the implementation of
             // this in XWiki core is wrong. See http://jira.xwiki.org/jira/XWIKI-2800 for more details.
-            // There is a draw-back to doing this, being that if the document content is being changed before 
+            // There is a draw-back to doing this, being that if the document content is being changed before
             // the document is rated, the contentUpdateDate will not be modified. Although possible, this is very
-            // unlikely to happen, or to be a use case. The default rating application will use an asynchronous service to
+            // unlikely to happen, or to be a use case. The default rating application will use an asynchronous service
+            // to
             // note a document, which service will only set the rating, so the behavior will be correct.
             getDocument().setContentDirty(false);
             context.getWiki().saveDocument(getDocument(), context);
@@ -197,16 +202,17 @@ public class DefaultRating implements Rating
 
     /**
      * {@inheritDoc}
-     *
+     * 
      * @see com.xpn.xwiki.plugin.ratings.Rating#remove()
      */
     public boolean remove()
     {
         return remove(true);
     }
+
     /**
      * {@inheritDoc}
-     *
+     * 
      * @see com.xpn.xwiki.plugin.ratings.Rating#remove()
      */
     protected boolean remove(boolean withSave)
@@ -231,7 +237,7 @@ public class DefaultRating implements Rating
     {
         try {
             XWikiDocument doc = getDocument();
-            
+
             String ratingsClassName = getRatingsManager().getRatingsClassName(context);
             BaseObject obj = new BaseObject();
             obj.setClassName(ratingsClassName);
@@ -244,7 +250,7 @@ public class DefaultRating implements Rating
             doc.addObject(ratingsClassName, obj);
             // set the internal variable
             object = obj;
-                        
+
         } catch (XWikiException e) {
             e.printStackTrace();
         }
