@@ -114,7 +114,7 @@
 <cache>default</cache>
 </property>
 <property>
-<code>var ratingsMessage = "$msg.get('admin.ratins')"
+<code>var ratingsMessage = "$msg.get('admin.ratings')"
 
 // If the rendered page is the administration page, we inject the ratings category.
 document.observe("dom:loaded", function() 
