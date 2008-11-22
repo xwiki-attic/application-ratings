@@ -565,7 +565,7 @@ float: left;
 <content>#if("$!{request.xpage}" == "plain")
   #if("$!{request.vote}" != "")
     #set($rdoc = $xwiki.getDocument($request.doc))
-    #set($vote = $xwiki.parseInt($request.vote))
+    #set($vote = $util.parseInt($request.vote))
     #if($vote &gt; 0 &amp;&amp; $vote &lt;= 5)
       #set($ok = $xwiki.ratings.setRating($rdoc, $context.user, $vote))
       #if($ok) 
