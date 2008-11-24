@@ -20,7 +20,6 @@
 package com.xpn.xwiki.plugin.ratings.internal;
 
 import com.xpn.xwiki.XWikiContext;
-import com.xpn.xwiki.plugin.comments.Container;
 import com.xpn.xwiki.plugin.ratings.AverageRating;
 import com.xpn.xwiki.plugin.ratings.RatingsException;
 
@@ -31,7 +30,7 @@ import com.xpn.xwiki.plugin.ratings.RatingsException;
 public class MemoryAverageRating implements AverageRating
 {
 
-    private Container container;
+    private String documentName;
 
     private int nbVotes;
 
@@ -39,22 +38,22 @@ public class MemoryAverageRating implements AverageRating
 
     private String method;
 
-    public MemoryAverageRating(Container container, int nbVotes, float averageVote, String method)
+    public MemoryAverageRating(String documentName, int nbVotes, float averageVote, String method)
     {
-        this.container = container;
+        this.documentName = documentName;
         this.nbVotes = nbVotes;
         this.averageVote = averageVote;
         this.method = method;
     }
 
-    public Container getContainer()
+    public String getDocumentName()
     {
-        return container;
+        return documentName;
     }
 
-    public void setContainer(Container container)
+    public void setDocumentName(String documentName)
     {
-        this.container = container;
+        this.documentName = documentName;
     }
 
     public int getNbVotes()

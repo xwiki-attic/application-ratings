@@ -59,11 +59,13 @@ public class RatingsPluginApi extends PluginApi<RatingsPlugin>
         return ratingsResult;
     }
 
+    
     public RatingApi setRating(Document doc, String author, int vote)
     {
+        // TODO protect this with programming rights
+        // and add a setRating(docName), not protected but for which the author is retrieved from context.
         try {
-            return new RatingApi(getRatingsPlugin().setRating(
-                context.getWiki().getDocument(doc.getFullName(), context), author, vote, context), context);
+            return new RatingApi(getRatingsPlugin().setRating(doc.getFullName(), author, vote, context), context);
         } catch (Throwable e) {
             context.put("exception", e);
             return null;
@@ -75,7 +77,7 @@ public class RatingsPluginApi extends PluginApi<RatingsPlugin>
         try {
             Rating rating =
                 getRatingsPlugin()
-                    .getRating(context.getWiki().getDocument(doc.getFullName(), context), author, context);
+                    .getRating(doc.getFullName(), author, context);
             if (rating == null)
                 return null;
             return new RatingApi(rating, context);
@@ -93,8 +95,7 @@ public class RatingsPluginApi extends PluginApi<RatingsPlugin>
     public List<RatingApi> getRatings(Document doc, int start, int count, boolean asc)
     {
         try {
-            return wrapRatings(getRatingsPlugin().getRatings(context.getWiki().getDocument(doc.getFullName(), context),
-                start, count, asc, context), context);
+            return wrapRatings(getRatingsPlugin().getRatings(doc.getFullName(), start, count, asc, context), context);
         } catch (Exception e) {
             context.put("exception", e);
             return null;
@@ -105,8 +106,8 @@ public class RatingsPluginApi extends PluginApi<RatingsPlugin>
     public AverageRatingApi getAverageRating(Document doc, String method)
     {
         try {
-            return new AverageRatingApi(getRatingsPlugin().getAverageRating(
-                context.getWiki().getDocument(doc.getFullName(), context), method, context), context);
+            return new AverageRatingApi(getRatingsPlugin().getAverageRating(doc.getFullName(), method, context),
+                context);
         } catch (Throwable e) {
             context.put("exception", e);
             return null;
@@ -116,8 +117,7 @@ public class RatingsPluginApi extends PluginApi<RatingsPlugin>
     public AverageRatingApi getAverageRating(Document doc)
     {
         try {
-            return new AverageRatingApi(getRatingsPlugin().getAverageRating(
-                context.getWiki().getDocument(doc.getFullName(), context), context), context);
+            return new AverageRatingApi(getRatingsPlugin().getAverageRating(doc.getFullName(), context), context);
         } catch (Throwable e) {
             context.put("exception", e);
             return null;
@@ -138,7 +138,7 @@ public class RatingsPluginApi extends PluginApi<RatingsPlugin>
     public AverageRatingApi getAverageRating(String fromsql, String wheresql)
     {
         try {
-            return new AverageRatingApi(getRatingsPlugin().getAverageRating(fromsql, wheresql, context), context);
+            return new AverageRatingApi(getRatingsPlugin().getAverageRatingFromQuery(fromsql, wheresql, context), context);
         } catch (Throwable e) {
             context.put("exception", e);
             return null;

@@ -29,7 +29,6 @@ import com.xpn.xwiki.XWikiException;
 import com.xpn.xwiki.doc.XWikiDocument;
 import com.xpn.xwiki.objects.BaseObject;
 import com.xpn.xwiki.objects.BaseProperty;
-import com.xpn.xwiki.plugin.comments.Container;
 import com.xpn.xwiki.plugin.ratings.Rating;
 import com.xpn.xwiki.plugin.ratings.RatingsException;
 import com.xpn.xwiki.plugin.ratings.RatingsManager;
@@ -41,29 +40,29 @@ import com.xpn.xwiki.plugin.ratings.RatingsPlugin;
  */
 public class SeparatePageRating implements Rating
 {
-    private Container container;
+    private String documentName;
 
     private XWikiDocument document;
 
     private XWikiContext context;
 
-    public SeparatePageRating(Container container, String author, int vote, XWikiContext context)
+    public SeparatePageRating(String documentName, String author, int vote, XWikiContext context)
         throws RatingsException
     {
-        this(container, author, new Date(), vote, context);
+        this(documentName, author, new Date(), vote, context);
     }
 
-    public SeparatePageRating(Container container, String author, Date date, int vote, XWikiContext context)
+    public SeparatePageRating(String documentName, String author, Date date, int vote, XWikiContext context)
         throws RatingsException
     {
-        this.container = container;
+        this.documentName = documentName;
         this.context = context;
-        this.document = addDocument(container, author, date, vote);
+        this.document = addDocument(documentName, author, date, vote);
     }
 
-    public SeparatePageRating(Container container, XWikiDocument doc, XWikiContext context) throws RatingsException
+    public SeparatePageRating(String documentName, XWikiDocument doc, XWikiContext context) throws RatingsException
     {
-        this.container = container;
+        this.documentName = documentName;
         this.context = context;
         this.document = doc;
     }
@@ -98,7 +97,7 @@ public class SeparatePageRating implements Rating
     {
         if (document == null) {
             try {
-                document = context.getWiki().getDocument(getPageName(container, context), context);
+                document = context.getWiki().getDocument(getPageName(this.documentName, context), context);
             } catch (XWikiException e) {
                 return null;
             }
@@ -184,16 +183,6 @@ public class SeparatePageRating implements Rating
     /**
      * {@inheritDoc}
      * 
-     * @see com.xpn.xwiki.plugin.ratings.Rating#getContainer()
-     */
-    public Container getContainer()
-    {
-        return container;
-    }
-
-    /**
-     * {@inheritDoc}
-     * 
      * @see com.xpn.xwiki.plugin.ratings.Rating#save()
      */
     public void save() throws RatingsException
@@ -243,31 +232,42 @@ public class SeparatePageRating implements Rating
      * @param container
      * @return
      */
-    private String getPageName(Container container, XWikiContext context) throws XWikiException
+    private String getPageName(String documentName, XWikiContext context) throws XWikiException
     {
-        XWikiDocument doc = context.getWiki().getDocument(container.getDocumentName(), context);
+        XWikiDocument doc = context.getWiki().getDocument(documentName, context);
         String ratingsSpace = getRatingsManager().getRatingsSpaceName(context);
         boolean hasRatingsSpaceForeachSpace = getRatingsManager().hasRatingsSpaceForeachSpace(context);
         if (hasRatingsSpaceForeachSpace)
             return doc.getSpace() + ratingsSpace + "."
-                + context.getWiki().getUniquePageName(ratingsSpace, doc.getName(), "R", true, context);
+                + getUniquePageName(ratingsSpace, doc.getName(), "R", true, context);
         else if (ratingsSpace == null)
-            return doc.getSpace() + "."
-                + context.getWiki().getUniquePageName(doc.getSpace(), doc.getName() + "R", "", true, context);
+            return doc.getSpace() + "." + getUniquePageName(doc.getSpace(), doc.getName() + "R", "", true, context);
         else {
-            return ratingsSpace
-                + "."
-                + context.getWiki().getUniquePageName(ratingsSpace, doc.getSpace() + "_" + doc.getName(), "R", true,
-                    context);
+            return ratingsSpace + "."
+                + getUniquePageName(ratingsSpace, doc.getSpace() + "_" + doc.getName(), "R", true, context);
         }
     }
 
-    private XWikiDocument addDocument(Container container, String author, Date date, int vote) throws RatingsException
+    private String getUniquePageName(String space, String name, String postfix, boolean forcepostfix,
+        XWikiContext context)
+    {
+        String pageName = context.getWiki().clearName(name, context);
+        if (forcepostfix || context.getWiki().exists(space + "." + pageName, context)) {
+            int i = 1;
+            while (context.getWiki().exists(space + "." + pageName + postfix + i, context)) {
+                i++;
+            }
+            return pageName + postfix + i;
+        }
+        return pageName;
+    }
+
+    private XWikiDocument addDocument(String documentName, String author, Date date, int vote) throws RatingsException
     {
         try {
             String ratingsClassName = getRatingsManager().getRatingsClassName(context);
-            String pageName = getPageName(container, context);
-            String parentDocName = container.getDocumentName();
+            String pageName = getPageName(documentName, context);
+            String parentDocName = documentName;
             com.xpn.xwiki.XWiki xwiki = context.getWiki();
             XWikiDocument doc = xwiki.getDocument(pageName, context);
             doc.setParent(parentDocName);
@@ -306,6 +306,11 @@ public class SeparatePageRating implements Rating
         }
 
         return sb.toString();
+    }
+
+    public String getDocumentName()
+    {
+        return this.documentName;
     }
 
 }

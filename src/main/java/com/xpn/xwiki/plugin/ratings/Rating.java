@@ -19,7 +19,6 @@
  */
 package com.xpn.xwiki.plugin.ratings;
 
-import com.xpn.xwiki.plugin.comments.Container;
 import com.xpn.xwiki.objects.BaseObject;
 import com.xpn.xwiki.XWikiContext;
 
@@ -41,11 +40,9 @@ import java.util.Date;
 public interface Rating
 {
     /**
-     * Retrieves the container to which this rating applies This can be a page, a rating, or something else
-     * 
-     * @return Container parent container
+     * @return the document name for which this rating applies.
      */
-    Container getContainer();
+    String getDocumentName();
 
     /**
      * Retrives the current rating as a BaseObject This method is used for compatiblity

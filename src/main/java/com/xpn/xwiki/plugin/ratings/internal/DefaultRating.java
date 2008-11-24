@@ -26,7 +26,6 @@ import com.xpn.xwiki.XWikiException;
 import com.xpn.xwiki.doc.XWikiDocument;
 import com.xpn.xwiki.objects.BaseObject;
 import com.xpn.xwiki.objects.BaseProperty;
-import com.xpn.xwiki.plugin.comments.Container;
 import com.xpn.xwiki.plugin.ratings.Rating;
 import com.xpn.xwiki.plugin.ratings.RatingsException;
 import com.xpn.xwiki.plugin.ratings.RatingsManager;
@@ -38,7 +37,7 @@ import com.xpn.xwiki.plugin.ratings.RatingsPlugin;
  */
 public class DefaultRating implements Rating
 {
-    private Container container;
+    private String documentName;
 
     private XWikiDocument document;
 
@@ -46,25 +45,24 @@ public class DefaultRating implements Rating
 
     private XWikiContext context;
 
-    public DefaultRating(Container container, String author, int vote, XWikiContext context)
+    public DefaultRating(String documentName, String author, int vote, XWikiContext context)
     {
-        this(container, author, new Date(), vote, context);
+        this(documentName, author, new Date(), vote, context);
     }
 
-    public DefaultRating(Container container, String author, Date date, int vote, XWikiContext context)
+    public DefaultRating(String documentName, String author, Date date, int vote, XWikiContext context)
     {
-        this.container = container;
         this.context = context;
+        this.documentName = documentName;
 
-        createObject(container, author, date, vote);
+        createObject(documentName, author, date, vote);
     }
 
-    public DefaultRating(Container container, XWikiDocument doc, BaseObject obj, XWikiContext context)
+    public DefaultRating(String documentName, BaseObject obj, XWikiContext context)
     {
-        this.document = doc;
+        this.document = getDocument();
         this.object = obj;
         this.context = context;
-        this.container = container;
     }
 
     public RatingsManager getRatingsManager()
@@ -94,10 +92,14 @@ public class DefaultRating implements Rating
         return object;
     }
 
-    public XWikiDocument getDocument() throws XWikiException
+    public XWikiDocument getDocument()
     {
         if (document == null) {
-            document = context.getWiki().getDocument(container.getDocumentName(), context);
+            try {
+                document = context.getWiki().getDocument(this.documentName, context);
+            } catch (XWikiException e) {
+                // do nothing
+            }
         }
         return document;
     }
@@ -174,11 +176,11 @@ public class DefaultRating implements Rating
     /**
      * {@inheritDoc}
      * 
-     * @see com.xpn.xwiki.plugin.ratings.Rating#getContainer()
+     * @see com.xpn.xwiki.plugin.ratings.Rating#getDocumentName()
      */
-    public Container getContainer()
+    public String getDocumentName()
     {
-        return container;
+        return this.documentName;
     }
 
     public void save() throws RatingsException
@@ -233,27 +235,22 @@ public class DefaultRating implements Rating
         return true;
     }
 
-    private void createObject(Container container, String author, Date date, int vote)
+    private void createObject(String documentName, String author, Date date, int vote)
     {
-        try {
-            XWikiDocument doc = getDocument();
+        XWikiDocument doc = getDocument();
 
-            String ratingsClassName = getRatingsManager().getRatingsClassName(context);
-            BaseObject obj = new BaseObject();
-            obj.setClassName(ratingsClassName);
-            obj.setName(doc.getFullName());
-            // read data from map
-            obj.setStringValue(RatingsManager.RATING_CLASS_FIELDNAME_AUTHOR, author);
-            obj.setDateValue(RatingsManager.RATING_CLASS_FIELDNAME_DATE, date);
-            obj.setIntValue(RatingsManager.RATING_CLASS_FIELDNAME_VOTE, vote);
-            obj.setStringValue(RatingsManager.RATING_CLASS_FIELDNAME_PARENT, container.getDocumentName());
-            doc.addObject(ratingsClassName, obj);
-            // set the internal variable
-            object = obj;
-
-        } catch (XWikiException e) {
-            e.printStackTrace();
-        }
+        String ratingsClassName = getRatingsManager().getRatingsClassName(context);
+        BaseObject obj = new BaseObject();
+        obj.setClassName(ratingsClassName);
+        obj.setName(doc.getFullName());
+        // read data from map
+        obj.setStringValue(RatingsManager.RATING_CLASS_FIELDNAME_AUTHOR, author);
+        obj.setDateValue(RatingsManager.RATING_CLASS_FIELDNAME_DATE, date);
+        obj.setIntValue(RatingsManager.RATING_CLASS_FIELDNAME_VOTE, vote);
+        obj.setStringValue(RatingsManager.RATING_CLASS_FIELDNAME_PARENT, documentName);
+        doc.addObject(ratingsClassName, obj);
+        // set the internal variable
+        object = obj;
     }
 
     public String toString()

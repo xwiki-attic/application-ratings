@@ -19,7 +19,6 @@
  */
 package com.xpn.xwiki.plugin.ratings;
 
-import com.xpn.xwiki.plugin.comments.Container;
 import com.xpn.xwiki.XWikiContext;
 
 import java.util.List;
@@ -52,18 +51,16 @@ public interface RatingsManager
 
     String getRatingsClassName(XWikiContext context);
 
-    Container newContainer(XWikiContext context);
-
-    List<Rating> getRatings(Container container, int start, int count, boolean asc, XWikiContext context)
+    List<Rating> getRatings(String documentName, int start, int count, boolean asc, XWikiContext context)
         throws RatingsException;
 
     Rating getRating(String ratingId, XWikiContext context) throws RatingsException;
 
-    Rating getRating(Container container, int id, XWikiContext context) throws RatingsException;
+    Rating getRating(String documentName, int id, XWikiContext context) throws RatingsException;
 
-    Rating getRating(Container container, String user, XWikiContext context) throws RatingsException;
+    Rating getRating(String documentName, String user, XWikiContext context) throws RatingsException;
 
-    Rating setRating(Container container, String author, int vote, XWikiContext context) throws RatingsException;
+    Rating setRating(String documentName, String author, int vote, XWikiContext context) throws RatingsException;
 
     boolean removeRating(Rating rating, XWikiContext context) throws RatingsException;
 
@@ -73,33 +70,32 @@ public interface RatingsManager
 
     boolean isReputationStored(XWikiContext context);
 
-    boolean hasRatings(XWikiContext context);
-
     boolean hasReputation(XWikiContext context);
 
     String[] getDefaultReputationMethods(XWikiContext context);
 
-    AverageRating getAverageRating(Container container, XWikiContext context) throws RatingsException;
+    AverageRating getAverageRating(String documentName, XWikiContext context) throws RatingsException;
 
-    AverageRating getAverageRating(Container container, String method, XWikiContext context) throws RatingsException;
+    AverageRating getAverageRating(String documentName, String method, XWikiContext context) throws RatingsException;
 
-    AverageRating getAverageRating(String fromsql, String wheresql, XWikiContext context) throws RatingsException;
-
-    AverageRating getAverageRating(String fromsql, String wheresql, String method, XWikiContext context)
+    AverageRating getAverageRatingFromQuery(String fromsql, String wheresql, XWikiContext context)
         throws RatingsException;
 
-    AverageRating getAverageRating(Container container, String method, boolean create, XWikiContext context)
+    AverageRating getAverageRatingFromQuery(String fromsql, String wheresql, String method, XWikiContext context)
         throws RatingsException;
 
-    AverageRating calcAverageRating(Container container, String method, XWikiContext context) throws RatingsException;
-
-    void updateAverageRating(Container container, Rating rating, int oldVote, String method, XWikiContext context)
+    AverageRating getAverageRating(String documentName, String method, boolean create, XWikiContext context)
         throws RatingsException;
 
-    void updateReputation(Container container, Rating rating, int oldVote, XWikiContext context)
+    AverageRating calcAverageRating(String documentName, String method, XWikiContext context) throws RatingsException;
+
+    void updateAverageRating(String documentName, Rating rating, int oldVote, String method, XWikiContext context)
         throws RatingsException;
 
-    void updateAverageRatings(Container container, Rating rating, int oldVote, XWikiContext context)
+    void updateReputation(String documentName, Rating rating, int oldVote, XWikiContext context)
+        throws RatingsException;
+
+    void updateAverageRatings(String documentName, Rating rating, int oldVote, XWikiContext context)
         throws RatingsException;
 
     AverageRating getUserReputation(String username, XWikiContext context) throws RatingsException;

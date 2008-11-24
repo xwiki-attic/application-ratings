@@ -24,7 +24,6 @@ import java.util.Map;
 
 import com.xpn.xwiki.XWikiContext;
 import com.xpn.xwiki.XWikiException;
-import com.xpn.xwiki.plugin.comments.Container;
 import com.xpn.xwiki.plugin.ratings.AverageRating;
 import com.xpn.xwiki.plugin.ratings.Rating;
 import com.xpn.xwiki.plugin.ratings.RatingsException;
@@ -68,11 +67,9 @@ public class SimpleReputationAlgorythm implements ReputationAlgorythm
      */
     public AverageRating getUserReputation(String username, XWikiContext context) throws ReputationException
     {
-        Container container = ratingsManager.newContainer(context);
-        container.setDocumentName(username);
         try {
             AverageRating aveRating =
-                ratingsManager.getAverageRating(container, RatingsManager.RATING_REPUTATION_METHOD_AVERAGE, context);
+                ratingsManager.getAverageRating(username, RatingsManager.RATING_REPUTATION_METHOD_AVERAGE, context);
             float oldRep = aveRating.getAverageVote();
             aveRating.setAverageVote(aveRating.getAverageVote() * 100 / getTotalReputation(context));
             totalReputation += aveRating.getAverageVote() - oldRep;
@@ -93,7 +90,7 @@ public class SimpleReputationAlgorythm implements ReputationAlgorythm
      * @return
      * @throws com.xpn.xwiki.plugin.ratings.ReputationException
      */
-    public AverageRating calcNewVoterReputation(String voter, Container container, Rating rating, int oldVote,
+    public AverageRating calcNewVoterReputation(String voter, String documentName, Rating rating, int oldVote,
         XWikiContext context) throws ReputationException
     {
         notimplemented();
@@ -111,7 +108,7 @@ public class SimpleReputationAlgorythm implements ReputationAlgorythm
      * @return
      * @throws com.xpn.xwiki.plugin.ratings.ReputationException
      */
-    public AverageRating calcNewContributorReputation(String contributor, Container container, Rating rating,
+    public AverageRating calcNewContributorReputation(String contributor, String documentName, Rating rating,
         int oldVote, XWikiContext context) throws ReputationException
     {
         String voter = rating.getAuthor();
@@ -159,14 +156,14 @@ public class SimpleReputationAlgorythm implements ReputationAlgorythm
     /**
      * Not implemented
      * 
-     * @param container
+     * @param documentName
      * @param rating
      * @param oldVote
      * @param context
      * @return
      * @throws com.xpn.xwiki.plugin.ratings.ReputationException
      */
-    public Map<String, AverageRating> calcNewAuthorsReputation(Container container, Rating rating, int oldVote,
+    public Map<String, AverageRating> calcNewAuthorsReputation(String documentName, Rating rating, int oldVote,
         XWikiContext context) throws ReputationException
     {
         notimplemented();

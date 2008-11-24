@@ -23,7 +23,6 @@ import com.xpn.xwiki.XWikiContext;
 import com.xpn.xwiki.XWikiException;
 import com.xpn.xwiki.doc.XWikiDocument;
 import com.xpn.xwiki.objects.BaseObject;
-import com.xpn.xwiki.plugin.comments.Container;
 import com.xpn.xwiki.plugin.ratings.AverageRating;
 import com.xpn.xwiki.plugin.ratings.RatingsException;
 import com.xpn.xwiki.plugin.ratings.RatingsManager;
@@ -34,15 +33,12 @@ import com.xpn.xwiki.plugin.ratings.RatingsManager;
  */
 public class StoredAverageRating implements AverageRating
 {
-    private Container container;
-
     private XWikiDocument document;
 
     private BaseObject object;
 
-    public StoredAverageRating(Container container, XWikiDocument document, BaseObject ratingObject)
+    public StoredAverageRating(XWikiDocument document, BaseObject ratingObject)
     {
-        this.container = container;
         this.document = document;
         this.object = ratingObject;
     }

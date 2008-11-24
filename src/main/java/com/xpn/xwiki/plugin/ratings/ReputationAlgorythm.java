@@ -20,7 +20,6 @@
 package com.xpn.xwiki.plugin.ratings;
 
 import com.xpn.xwiki.XWikiContext;
-import com.xpn.xwiki.plugin.comments.Container;
 
 import java.util.Map;
 
@@ -51,41 +50,41 @@ public interface ReputationAlgorythm
      * Recalculates the contributor reputation. Only the creator of the document will have it's reputation updated
      * 
      * @param voter Voter that will have it's reputation updated
-     * @param container Elements that was rated
+     * @param documentName Elements that was rated
      * @param rating New rating of the element, including who did the rating
      * @param oldVote previous vote of the user
      * @param context context of the request
      * @return AverageRating of the voter
      * @throws ReputationException
      */
-    AverageRating calcNewVoterReputation(String voter, Container container, Rating rating, int oldVote,
+    AverageRating calcNewVoterReputation(String voter, String documentName, Rating rating, int oldVote,
         XWikiContext context) throws ReputationException;
 
     /**
      * Recalculates the contributors reputation
      * 
-     * @param container Elements that was rated
+     * @param documentName Elements that was rated
      * @param rating New rating of the element, including who did the rating
      * @param oldVote previous vote of the user
      * @param context context of the request
      * @return Map of AverageRating of each contributor of the page that has an updated reputation
      * @throws ReputationException
      */
-    Map<String, AverageRating> calcNewAuthorsReputation(Container container, Rating rating, int oldVote,
+    Map<String, AverageRating> calcNewAuthorsReputation(String documentName, Rating rating, int oldVote,
         XWikiContext context) throws ReputationException;
 
     /**
      * Recalculates the contributor reputation. Only the creator of the document will have it's reputation updated
      * 
      * @param contributor Contributor that will have it's reputation updated
-     * @param container Elements that was rated
+     * @param documentName Elements that was rated
      * @param rating New rating of the element, including who did the rating
      * @param oldVote previous vote of the user
      * @param context context of the request
      * @return AverageRating of the contributor
      * @throws ReputationException
      */
-    AverageRating calcNewContributorReputation(String contributor, Container container, Rating rating, int oldVote,
+    AverageRating calcNewContributorReputation(String contributor, String documentName, Rating rating, int oldVote,
         XWikiContext context) throws ReputationException;
 
     /**

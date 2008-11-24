@@ -26,10 +26,8 @@ import org.apache.commons.logging.LogFactory;
 
 import com.xpn.xwiki.XWikiContext;
 import com.xpn.xwiki.api.Api;
-import com.xpn.xwiki.doc.XWikiDocument;
 import com.xpn.xwiki.plugin.XWikiDefaultPlugin;
 import com.xpn.xwiki.plugin.XWikiPluginInterface;
-import com.xpn.xwiki.plugin.comments.Container;
 import com.xpn.xwiki.plugin.ratings.internal.DefaultRatingsManager;
 
 /**
@@ -78,7 +76,7 @@ public class RatingsPlugin extends XWikiDefaultPlugin
                 String ratingsManagerClass;
                 ratingsManagerClass =
                     context.getWiki().Param("xwiki.ratings.ratingsmanager",
-                        "com.xpn.xwiki.plugin.ratings.internal.DefaultRatingsManager");
+                        "com.xpn.xwiki.plugin.ratings.internal.SeparatePageRatingsManager");
 
                 if (LOG.isDebugEnabled())
                     LOG.debug("Init comments manager with class " + ratingsManagerClass);
@@ -119,53 +117,43 @@ public class RatingsPlugin extends XWikiDefaultPlugin
         this.ratingsManager = ratingsManager;
     }
 
-    public List<Rating> getRatings(XWikiDocument doc, int start, int count, boolean asc, XWikiContext context)
+    public List<Rating> getRatings(String documentName, int start, int count, boolean asc, XWikiContext context)
         throws RatingsException
     {
-        Container container = getRatingsManager(context).newContainer(context);
-        container.setDocumentName(doc.getFullName());
-        return getRatingsManager(context).getRatings(container, start, count, asc, context);
+        return getRatingsManager(context).getRatings(documentName, start, count, asc, context);
     }
 
-    public Rating setRating(XWikiDocument doc, String author, int vote, XWikiContext context) throws RatingsException
+    public Rating setRating(String documentName, String author, int vote, XWikiContext context) throws RatingsException
     {
-        Container container = getRatingsManager(context).newContainer(context);
-        container.setDocumentName(doc.getFullName());
-        return getRatingsManager(context).setRating(container, author, vote, context);
+        return getRatingsManager(context).setRating(documentName, author, vote, context);
     }
 
-    public Rating getRating(XWikiDocument doc, String author, XWikiContext context) throws RatingsException
+    public Rating getRating(String documentName, String author, XWikiContext context) throws RatingsException
     {
-        Container container = getRatingsManager(context).newContainer(context);
-        container.setDocumentName(doc.getFullName());
-        return getRatingsManager(context).getRating(container, author, context);
+        return getRatingsManager(context).getRating(documentName, author, context);
     }
 
-    public AverageRating getAverageRating(XWikiDocument doc, String method, XWikiContext context)
+    public AverageRating getAverageRating(String documentName, String method, XWikiContext context)
         throws RatingsException
     {
-        Container container = getRatingsManager(context).newContainer(context);
-        container.setDocumentName(doc.getFullName());
-        return getRatingsManager(context).getAverageRating(container, method, context);
+        return getRatingsManager(context).getAverageRating(documentName, method, context);
     }
 
-    public AverageRating getAverageRating(XWikiDocument doc, XWikiContext context) throws RatingsException
+    public AverageRating getAverageRating(String documentName, XWikiContext context) throws RatingsException
     {
-        Container container = getRatingsManager(context).newContainer(context);
-        container.setDocumentName(doc.getFullName());
-        return getRatingsManager(context).getAverageRating(container, context);
+        return getRatingsManager(context).getAverageRating(documentName, context);
     }
 
     public AverageRating getAverageRating(String fromsql, String wheresql, String method, XWikiContext context)
         throws RatingsException
     {
-        return getRatingsManager(context).getAverageRating(fromsql, wheresql, method, context);
+        return getRatingsManager(context).getAverageRatingFromQuery(fromsql, wheresql, method, context);
     }
 
-    public AverageRating getAverageRating(String fromsql, String wheresql, XWikiContext context)
+    public AverageRating getAverageRatingFromQuery(String fromsql, String wheresql, XWikiContext context)
         throws RatingsException
     {
-        return getRatingsManager(context).getAverageRating(fromsql, wheresql, context);
+        return getRatingsManager(context).getAverageRatingFromQuery(fromsql, wheresql, context);
     }
 
     public AverageRating getUserReputation(String username, XWikiContext context) throws RatingsException

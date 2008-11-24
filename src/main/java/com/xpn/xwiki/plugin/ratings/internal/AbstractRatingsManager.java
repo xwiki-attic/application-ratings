@@ -32,8 +32,6 @@ import com.xpn.xwiki.XWikiException;
 import com.xpn.xwiki.doc.XWikiDocument;
 import com.xpn.xwiki.objects.BaseObject;
 import com.xpn.xwiki.objects.classes.BaseClass;
-import com.xpn.xwiki.plugin.comments.Container;
-import com.xpn.xwiki.plugin.comments.internal.DefaultContainer;
 import com.xpn.xwiki.plugin.ratings.AverageRating;
 import com.xpn.xwiki.plugin.ratings.Rating;
 import com.xpn.xwiki.plugin.ratings.RatingsException;
@@ -174,11 +172,6 @@ public abstract class AbstractRatingsManager implements RatingsManager
         return bclass;
     }
 
-    public Container newContainer(XWikiContext context)
-    {
-        return new DefaultContainer(context);
-    }
-
     public boolean hasRatings(XWikiContext context)
     {
         int result = (int) context.getWiki().ParamAsLong("xwiki.ratings", 0);
@@ -211,26 +204,26 @@ public abstract class AbstractRatingsManager implements RatingsManager
         return method.split(",");
     }
 
-    public void updateAverageRatings(Container container, Rating rating, int oldVote, XWikiContext context)
+    public void updateAverageRatings(String documentName, Rating rating, int oldVote, XWikiContext context)
         throws RatingsException
     {
         String[] methods = getDefaultReputationMethods(context);
         for (int i = 0; i < methods.length; i++)
-            updateAverageRating(container, rating, oldVote, methods[i], context);
+            updateAverageRating(documentName, rating, oldVote, methods[i], context);
     }
 
-    public AverageRating getAverageRating(String fromsql, String wheresql, XWikiContext context)
+    public AverageRating getAverageRatingFromQuery(String fromsql, String wheresql, XWikiContext context)
         throws RatingsException
     {
-        return getAverageRating(fromsql, wheresql, RATING_REPUTATION_METHOD_AVERAGE, context);
+        return getAverageRatingFromQuery(fromsql, wheresql, RATING_REPUTATION_METHOD_AVERAGE, context);
     }
 
-    public AverageRating getAverageRating(Container container, XWikiContext context) throws RatingsException
+    public AverageRating getAverageRating(String documentName, XWikiContext context) throws RatingsException
     {
-        return getAverageRating(container, RATING_REPUTATION_METHOD_AVERAGE, context);
+        return getAverageRating(documentName, RATING_REPUTATION_METHOD_AVERAGE, context);
     }
 
-    public AverageRating getAverageRating(String fromsql, String wheresql, String method, XWikiContext context)
+    public AverageRating getAverageRatingFromQuery(String fromsql, String wheresql, String method, XWikiContext context)
         throws RatingsException
     {
         try {
@@ -334,14 +327,14 @@ public abstract class AbstractRatingsManager implements RatingsManager
         return groovyPage;
     }
 
-    public AverageRating calcAverageRating(Container container, String method, XWikiContext context)
+    public AverageRating calcAverageRating(String documentName, String method, XWikiContext context)
         throws RatingsException
     {
         int nbVotes = 0;
         int balancedNbVotes = 0;
         float totalVote = 0;
         float averageVote = 0;
-        List<Rating> ratings = getRatings(container, 0, 0, true, context);
+        List<Rating> ratings = getRatings(documentName, 0, 0, true, context);
         if (ratings == null)
             return null;
         for (Rating rating : ratings) {
@@ -349,7 +342,7 @@ public abstract class AbstractRatingsManager implements RatingsManager
                 String author = rating.getAuthor();
                 // in case we are evaluating the average rating of a user
                 // we should not include votes of himself to a user
-                if (!author.equals(container.getDocumentName())) {
+                if (!author.equals(documentName)) {
                     AverageRating reputation = getUserReputation(author, context);
                     if ((reputation == null) || (reputation.getAverageVote() == 0)) {
                         totalVote += rating.getVote();
@@ -368,16 +361,16 @@ public abstract class AbstractRatingsManager implements RatingsManager
 
         if (balancedNbVotes != 0)
             averageVote = totalVote / balancedNbVotes;
-        return new MemoryAverageRating(container, nbVotes, averageVote, method);
+        return new MemoryAverageRating(documentName, nbVotes, averageVote, method);
     }
 
-    public void updateAverageRating(Container container, Rating rating, int oldVote, String method, XWikiContext context)
+    public void updateAverageRating(String documentName, Rating rating, int oldVote, String method, XWikiContext context)
         throws RatingsException
     {
         // we only update if we are in stored mode and if the vote changed
         if (isAverageRatingStored(context) && oldVote != rating.getVote()) {
-            AverageRating aRating = calcAverageRating(container, method, context);
-            AverageRating averageRating = getAverageRating(container, method, true, context);
+            AverageRating aRating = calcAverageRating(documentName, method, context);
+            AverageRating averageRating = getAverageRating(documentName, method, true, context);
             averageRating.setAverageVote(aRating.getAverageVote());
             averageRating.setNbVotes(aRating.getNbVotes());
             averageRating.save(context);
@@ -391,7 +384,7 @@ public abstract class AbstractRatingsManager implements RatingsManager
         }
     }
 
-    public void updateReputation(Container container, Rating rating, int oldVote, XWikiContext context)
+    public void updateReputation(String documentName, Rating rating, int oldVote, XWikiContext context)
         throws RatingsException
     {
         // we only update if we are in stored mode and if the vote changed
@@ -400,7 +393,7 @@ public abstract class AbstractRatingsManager implements RatingsManager
             // voter reputation. This will give points to the voter
             try {
                 AverageRating voterRating =
-                    ralgo.calcNewVoterReputation(rating.getAuthor(), container, rating, oldVote, context);
+                    ralgo.calcNewVoterReputation(rating.getAuthor(), documentName, rating, oldVote, context);
                 // we need to save this reputation if it has changed
                 updateUserReputation(rating.getAuthor(), voterRating, context);
             } catch (ReputationException e) {
@@ -408,15 +401,15 @@ public abstract class AbstractRatingsManager implements RatingsManager
                     // we should log this error
                     if (LOG.isErrorEnabled())
                         LOG.error("Error while calculating voter reputation " + rating.getAuthor() + " for document "
-                            + container.getDocumentName(), e);
+                            + documentName, e);
                 }
             }
 
             // author reputation. This will be giving points to the creator of a document or comment
             try {
-                XWikiDocument doc = context.getWiki().getDocument(container.getDocumentName(), context);
+                XWikiDocument doc = context.getWiki().getDocument(documentName, context);
                 AverageRating authorRating =
-                    ralgo.calcNewContributorReputation(doc.getCreator(), container, rating, oldVote, context);
+                    ralgo.calcNewContributorReputation(doc.getCreator(), documentName, rating, oldVote, context);
                 // we need to save the author reputation
                 updateUserReputation(doc.getCreator(), authorRating, context);
             } catch (ReputationException e) {
@@ -424,29 +417,29 @@ public abstract class AbstractRatingsManager implements RatingsManager
                     // we should log this error
                     if (LOG.isErrorEnabled())
                         LOG.error("Error while calculating author reputation for document "
-                            + container.getDocumentName(), e);
+                            + documentName, e);
                 }
             } catch (XWikiException e) {
                 if (LOG.isErrorEnabled())
-                    LOG.error("Error while calculating author reputation for document " + container.getDocumentName(),
+                    LOG.error("Error while calculating author reputation for document " + documentName,
                         e);
             }
 
             // all authors reputation. This will be used to give points to all participants to a document
             try {
                 Map<String, AverageRating> authorsRatings =
-                    ralgo.calcNewAuthorsReputation(container, rating, oldVote, context);
+                    ralgo.calcNewAuthorsReputation(documentName, rating, oldVote, context);
                 // TODO this is not implemented yet
             } catch (ReputationException e) {
                 if (e.getCode() != ReputationException.ERROR_REPUTATION_NOT_IMPLEMENTED) {
                     // we should log this error
                     if (LOG.isErrorEnabled())
                         LOG.error("Error while calculating authors reputation for document "
-                            + container.getDocumentName(), e);
+                            + documentName, e);
                 }
             } catch (XWikiException e) {
                 if (LOG.isErrorEnabled())
-                    LOG.error("Error while calculating authors for document " + container.getDocumentName(), e);
+                    LOG.error("Error while calculating authors for document " + documentName, e);
             }
         }
     }
@@ -456,9 +449,7 @@ public abstract class AbstractRatingsManager implements RatingsManager
     {
         try {
             // We should update the user rating
-            Container container = newContainer(context);
-            container.setDocumentName(author);
-            AverageRating rating = getAverageRating(container, voterRating.getMethod(), true, context);
+            AverageRating rating = getAverageRating(author, voterRating.getMethod(), true, context);
             rating.setAverageVote(voterRating.getAverageVote());
             rating.setMethod(voterRating.getMethod());
             rating.setNbVotes(voterRating.getNbVotes());
@@ -474,33 +465,31 @@ public abstract class AbstractRatingsManager implements RatingsManager
             return getReputationAlgorythm(context).getUserReputation(username, context);
         } catch (ReputationException e) {
             if (e.getCode() == ReputationException.ERROR_REPUTATION_NOT_IMPLEMENTED) {
-                Container container = newContainer(context);
-                container.setDocumentName(username);
-                return getAverageRating(container, context);
+                return getAverageRating(username, context);
             } else
                 throw e;
         }
     }
 
-    public AverageRating getAverageRating(Container container, String method, XWikiContext context)
+    public AverageRating getAverageRating(String documentName, String method, XWikiContext context)
         throws RatingsException
     {
-        return getAverageRating(container, method, false, context);
+        return getAverageRating(documentName, method, false, context);
     }
 
-    public AverageRating getAverageRating(Container container, String method, boolean create, XWikiContext context)
+    public AverageRating getAverageRating(String documentName, String method, boolean create, XWikiContext context)
         throws RatingsException
     {
         try {
             if (isAverageRatingStored(context)) {
                 String className = getAverageRatingsClassName(context);
-                XWikiDocument doc = context.getWiki().getDocument(container.getDocumentName(), context);
+                XWikiDocument doc = context.getWiki().getDocument(documentName, context);
                 BaseObject averageRatingObject =
                     doc.getObject(className, RatingsManager.AVERAGERATING_CLASS_FIELDNAME_AVERAGEVOTE_METHOD, method,
                         false);
                 if (averageRatingObject == null) {
                     if (!create) {
-                        return calcAverageRating(container, method, context);
+                        return calcAverageRating(documentName, method, context);
                     }
 
                     // initiate a new average rating object
@@ -509,9 +498,9 @@ public abstract class AbstractRatingsManager implements RatingsManager
                         method);
                 }
 
-                return new StoredAverageRating(container, doc, averageRatingObject);
+                return new StoredAverageRating(doc, averageRatingObject);
             } else {
-                return calcAverageRating(container, method, context);
+                return calcAverageRating(documentName, method, context);
             }
         } catch (XWikiException e) {
             throw new RatingsException(e);
