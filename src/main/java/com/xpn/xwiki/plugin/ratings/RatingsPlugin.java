@@ -70,23 +70,19 @@ public class RatingsPlugin extends XWikiDefaultPlugin
 
     public RatingsManager getRatingsManager(XWikiContext context)
     {
-        synchronized (this.RATINGS_MANAGER_LOCK) {
+        synchronized (RATINGS_MANAGER_LOCK) {
             if (this.ratingsManager == null) {
                 String ratingsManagerClass;
                 ratingsManagerClass =
                     context.getWiki().Param("xwiki.ratings.ratingsmanager",
-                        "com.xpn.xwiki.plugin.ratings.internal.SeparatePageRatingsManager");
+                        "com.xpn.xwiki.plugin.ratings.internal.DefaultRatingsManager");
 
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Init comments manager with class " + ratingsManagerClass);
-                }
+                LOG.debug("Init comments manager with class " + ratingsManagerClass);
 
                 try {
                     this.ratingsManager = (RatingsManager) Class.forName(ratingsManagerClass).newInstance();
                 } catch (Exception e) {
-                    if (LOG.isErrorEnabled()) {
-                        LOG.error("Could not init ragints manager for class " + ratingsManagerClass, e);
-                    }
+                    LOG.error("Could not init ratings manager for class " + ratingsManagerClass, e);
                     this.ratingsManager = new DefaultRatingsManager();
                 }
             }
