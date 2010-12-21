@@ -59,9 +59,12 @@ public class DefaultRating implements Rating
 
     public DefaultRating(String documentName, BaseObject obj, XWikiContext context)
     {
+        this.context = context;
+        this.documentName = documentName;
+        
         this.document = getDocument();
         this.object = obj;
-        this.context = context;
+
     }
 
     public RatingsManager getRatingsManager()

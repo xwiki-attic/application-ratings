@@ -179,7 +179,7 @@ public abstract class AbstractRatingsManager implements RatingsManager
 
     public boolean isAverageRatingStored(XWikiContext context)
     {
-        int result = (int) context.getWiki().ParamAsLong("xwiki.ratings.averagerating.stored", 0);
+        int result = (int) context.getWiki().ParamAsLong("xwiki.ratings.averagerating.stored", 1);
         return (context.getWiki().getXWikiPreferenceAsInt("ratings_averagerating_stored", result, context) == 1);
     }
 
