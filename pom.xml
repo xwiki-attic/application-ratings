@@ -5,11 +5,11 @@
     <version>15</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.xpn.xwiki.platform.applications</groupId>
+  <groupId>org.xwiki.contrib</groupId>
   <artifactId>xwiki-application-ratings</artifactId>
   <packaging>xar</packaging>
   <name>XWiki Platform - Applications - Ratings</name>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.2</version>
   <description>Application that allows users to rate Wiki Document, and to browse pages by average rating</description>
   <build>
    <plugins>
@@ -59,9 +59,9 @@
    </plugins>
   </build>
   <scm>
-    <connection>scm:svn:http://svn.xwiki.org/svnroot/xwiki/contrib/projects/xwiki-application-ratings/trunk</connection>
-    <developerConnection>scm:svn:https://svn.xwiki.org/svnroot/xwiki/contrib/projects/xwiki-application-ratings/trunk</developerConnection>
-    <url>http://svn.xwiki.org/svnroot/xwiki/contrib/projects/xwiki-application-ratings/trunk</url>
+    <connection>scm:svn:http://svn.xwiki.org/svnroot/xwiki/contrib/projects/xwiki-application-ratings/tags/xwiki-application-ratings-1.2</connection>
+    <developerConnection>scm:svn:https://svn.xwiki.org/svnroot/xwiki/contrib/projects/xwiki-application-ratings/tags/xwiki-application-ratings-1.2</developerConnection>
+    <url>http://svn.xwiki.org/svnroot/xwiki/contrib/projects/xwiki-application-ratings/tags/xwiki-application-ratings-1.2</url>
   </scm>
   <distributionManagement>
     <repository>
