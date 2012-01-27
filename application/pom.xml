@@ -14,7 +14,7 @@
     <plugins>
       <!-- Force the "use" field of JSX and CSS extensions to be the correct ones when building the final XAR.
            This is to avoid programmers mistakes, as it is very easy to forget to check they have the proper ones
-           When commiting changes based on a XAR export.
+           When committing changes based on a XAR export.
             -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -42,7 +42,7 @@
               <stylesheet>src/main/build/transformation/sx-always.xsl</stylesheet>
             </transformationSet>
             <!-- Make sure the extensions in XWiki.Ratings are not used always by default, so that the default behavior when
-                 importing the XAR is that ratings are not activated. (They are activable throught the Ratings admin category))
+                 importing the XAR is that ratings are not activated. (They can be activated through the Ratings admin category))
                  --> 
             <transformationSet>
               <dir>src/main/resources</dir>
@@ -54,23 +54,6 @@
             </transformationSet>
           </transformationSets>
         </configuration>
-      </plugin>
-
-      <!-- We must re-specify the version of the license-resources package,
-           since ${project.version} is resolved to the current project's version, not the platform one -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-remote-resources-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>xwiki-license-resources</id>
-            <configuration>
-              <resourceBundles>
-                <resourceBundle>org.xwiki.commons:xwiki-commons-tool-license-resources:3.1</resourceBundle>
-              </resourceBundles>
-            </configuration>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>
