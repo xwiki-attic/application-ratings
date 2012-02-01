@@ -23,8 +23,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.slf4j.Logger;
+import org.xwiki.component.annotation.Component;
+
+import com.xpn.xwiki.XWiki;
 import com.xpn.xwiki.XWikiContext;
 import com.xpn.xwiki.XWikiException;
 import com.xpn.xwiki.doc.XWikiDocument;
@@ -38,43 +43,42 @@ import com.xpn.xwiki.plugin.ratings.RatingsManager;
  * @see RatingsManager
  * @see AbstractRatingsManager
  */
+@Component
+@Named("separatepage")
 public class SeparatePageRatingsManager extends AbstractRatingsManager
 {
-    private static Log LOG = LogFactory.getLog(SeparatePageRatingsManager.class);
+    @Inject
+    private Logger logger;
 
-    public SeparatePageRatingsManager()
+    public String getRatingsSpaceName()
     {
-        super();
-    }
+        XWikiContext context = getXWikiContext();
 
-    public String getRatingsSpaceName(XWikiContext context)
-    {
         String ratingsSpaceName = context.getWiki().Param("xwiki.ratings.separatepagemanager.spacename", "");
         ratingsSpaceName =
             context.getWiki().getXWikiPreference("ratings_separatepagemanager_spacename", ratingsSpaceName, context);
         return ratingsSpaceName;
     }
 
-    public boolean hasRatingsSpaceForeachSpace(XWikiContext context)
+    public boolean hasRatingsSpaceForeachSpace()
     {
+        XWikiContext context = getXWikiContext();
+
         int result = (int) context.getWiki().ParamAsLong("xwiki.ratings.separatepagemanager.hasratingsforeachspace", 0);
         return (context.getWiki().getXWikiPreferenceAsInt("ratings_separatepagemanager_hasratingsforeachspace", result,
             context) == 1);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @see com.xpn.xwiki.plugin.ratings.RatingsManager#setRating(com.xpn.xwiki.plugin.comments.Container, String, int,
-     *      com.xpn.xwiki.XWikiContext)
-     */
-    public Rating setRating(String documentName, String author, int vote, XWikiContext context) throws RatingsException
+    @Override
+    public Rating setRating(String documentName, String author, int vote) throws RatingsException
     {
-        Rating rating = getRating(documentName, author, context);
+        XWikiContext context = getXWikiContext();
+
+        Rating rating = getRating(documentName, author);
         int oldVote;
         if (rating == null) {
             oldVote = 0;
-            rating = new SeparatePageRating(documentName, author, vote, context);
+            rating = new SeparatePageRating(documentName, author, vote, this, context);
         } else {
             oldVote = rating.getVote();
             rating.setVote(vote);
@@ -82,47 +86,43 @@ public class SeparatePageRatingsManager extends AbstractRatingsManager
         }
         rating.save();
         // update the average rating
-        updateAverageRatings(documentName, rating, oldVote, context);
+        updateAverageRatings(documentName, rating, oldVote);
 
         // update reputation
-        updateReputation(documentName, rating, oldVote, context);
+        updateReputation(documentName, rating, oldVote);
         return rating;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @see com.xpn.xwiki.plugin.ratings.RatingsManager#getRatings(com.xpn.xwiki.plugin.comments.Container, int, int,
-     *      boolean, com.xpn.xwiki.XWikiContext)
-     */
-    public List<Rating> getRatings(String documentName, int start, int count, boolean asc, XWikiContext context)
-        throws RatingsException
+    @Override
+    public List<Rating> getRatings(String documentName, int start, int count, boolean asc) throws RatingsException
     {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Calling separate page manager code for ratings");
+        if (logger.isDebugEnabled()) {
+            logger.debug("Calling separate page manager code for ratings");
         }
 
+        XWikiContext context = getXWikiContext();
+        XWiki xwiki = context.getWiki();
+
+        List<Rating> ratings = new ArrayList<Rating>();
+
+        // FIXME: use start and count in the query.
         String sql =
             ", BaseObject as obj, StringProperty as parentprop where doc.fullName=obj.name and obj.className='"
-                + getRatingsClassName(context)
+                + getRatingsClassName()
                 + "' and obj.id=parentprop.id.id and parentprop.id.name='"
                 + RATING_CLASS_FIELDNAME_PARENT
                 + "' and parentprop.value='"
                 + documentName
-                +
-                "' and obj.name not in (select obj2.name from BaseObject as obj2, StringProperty as statusprop where obj2.className='"
-                + getRatingsClassName(context)
-                +
-                "' and obj2.id=statusprop.id.id and statusprop.id.name='status' and (statusprop.value='moderated' or statusprop.value='refused') and obj.id=obj2.id) order by doc.date "
+                + "' and obj.name not in (select obj2.name from BaseObject as obj2, StringProperty as statusprop where obj2.className='"
+                + getRatingsClassName()
+                + "' and obj2.id=statusprop.id.id and statusprop.id.name='status' and (statusprop.value='moderated' or statusprop.value='refused') and obj.id=obj2.id) order by doc.date "
                 + (asc ? "asc" : "desc");
-        List<Rating> ratings = new ArrayList<Rating>();
+
         try {
-            List<String> ratingPageNameList =
-                context.getWiki().getStore().searchDocumentsNames(sql, count, start, context);
+            List<String> ratingPageNameList = xwiki.getStore().searchDocumentsNames(sql, count, start, context);
 
             for (String ratingPageName : ratingPageNameList) {
-                ratings.add(new SeparatePageRatingsManager().getRatingFromDocument(documentName, context.getWiki()
-                    .getDocument(ratingPageName, context), context));
+                ratings.add(getRatingFromDocument(documentName, xwiki.getDocument(ratingPageName, context), context));
             }
         } catch (XWikiException e) {
             throw new RatingsException(e);
@@ -131,61 +131,40 @@ public class SeparatePageRatingsManager extends AbstractRatingsManager
         return ratings;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @see com.xpn.xwiki.plugin.ratings.RatingsManager#getRatings(com.xpn.xwiki.plugin.comments.Container, int, int,
-     *      boolean, com.xpn.xwiki.XWikiContext)
-     */
-    public Rating getRating(String documentName, int id, XWikiContext context) throws RatingsException
+    @Override
+    public Rating getRating(String documentName, int id) throws RatingsException
     {
+        XWikiContext context = getXWikiContext();
+        XWiki xwiki = context.getWiki();
+
         String sql =
             ", BaseObject as obj, StringProperty as parentprop where doc.fullName=obj.name and obj.className='"
-                + getRatingsClassName(context)
+                + getRatingsClassName()
                 + "' and obj.id=parentprop.id.id and parentprop.id.name='"
                 + RATING_CLASS_FIELDNAME_PARENT
                 + "' and parentprop.value='"
                 + documentName
-                +
-                "' and obj.name not in (select obj2.name from BaseObject as obj2, StringProperty as statusprop where obj2.className='"
-                + getRatingsClassName(context)
-                +
-                "' and obj2.id=statusprop.id.id and statusprop.id.name='status' and (statusprop.value='moderated' or statusprop.value='refused') and obj.id=obj2.id) order by doc.date desc";
+                + "' and obj.name not in (select obj2.name from BaseObject as obj2, StringProperty as statusprop where obj2.className='"
+                + getRatingsClassName()
+                + "' and obj2.id=statusprop.id.id and statusprop.id.name='status' and (statusprop.value='moderated' or statusprop.value='refused') and obj.id=obj2.id) order by doc.date desc";
         try {
-            List<String> ratingPageNameList = context.getWiki().getStore().searchDocumentsNames(sql, 1, id, context);
+            List<String> ratingPageNameList = xwiki.getStore().searchDocumentsNames(sql, 1, id, context);
             if ((ratingPageNameList == null) || (ratingPageNameList.size() == 0)) {
                 return null;
             } else {
-                return new SeparatePageRatingsManager().getRatingFromDocument(documentName, context.getWiki()
-                    .getDocument(ratingPageNameList.get(0), context), context);
+                return new SeparatePageRatingsManager().getRatingFromDocument(documentName,
+                    xwiki.getDocument(ratingPageNameList.get(0), context), context);
             }
         } catch (XWikiException e) {
             throw new RatingsException(e);
         }
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @see com.xpn.xwiki.plugin.ratings.RatingsManager#getRating(com.xpn.xwiki.plugin.comments.Container, String,
-     *      com.xpn.xwiki.XWikiContext)
-     */
-    public Rating getRating(String documentName, String author, XWikiContext context) throws RatingsException
+    @Override
+    public Rating getRating(String ratingId) throws RatingsException
     {
-        try {
-            for (Rating rating : getRatings(documentName, 0, 0, false, context)) {
-                if (author.equals(rating.getAuthor())) {
-                    return rating;
-                }
-            }
-        } catch (XWikiException e) {
-            return null;
-        }
-        return null;
-    }
+        XWikiContext context = getXWikiContext();
 
-    public Rating getRating(String ratingId, XWikiContext context) throws RatingsException
-    {
         try {
             int i1 = ratingId.indexOf(".");
             if (i1 == -1) {
@@ -199,7 +178,7 @@ public class SeparatePageRatingsManager extends AbstractRatingsManager
                     RatingsException.ERROR_RATINGS_INVALID_RATING_ID, "Invalid rating ID, rating does not exist");
             }
 
-            BaseObject object = doc.getObject(getRatingsClassName(context));
+            BaseObject object = doc.getObject(getRatingsClassName());
             if (object == null) {
                 throw new RatingsException(RatingsException.MODULE_PLUGIN_RATINGS,
                     RatingsException.ERROR_RATINGS_INVALID_RATING_ID, "Invalid rating ID, rating does not exist");
@@ -207,7 +186,7 @@ public class SeparatePageRatingsManager extends AbstractRatingsManager
 
             String parentDocName = object.getStringValue(RATING_CLASS_FIELDNAME_PARENT);
 
-            return new SeparatePageRating(parentDocName, doc, context);
+            return new SeparatePageRating(parentDocName, doc, this, context);
         } catch (XWikiException e) {
             throw new RatingsException(e);
         }
@@ -216,6 +195,6 @@ public class SeparatePageRatingsManager extends AbstractRatingsManager
     public Rating getRatingFromDocument(String documentName, XWikiDocument doc, XWikiContext context)
         throws RatingsException
     {
-        return new SeparatePageRating(documentName, doc, context);
+        return new SeparatePageRating(documentName, doc, this, context);
     }
 }

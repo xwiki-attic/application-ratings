@@ -22,9 +22,15 @@ package com.xpn.xwiki.plugin.ratings.internal;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.xwiki.component.manager.ComponentLookupException;
+import org.xwiki.component.manager.ComponentManager;
+import org.xwiki.component.phase.InitializationException;
+import org.xwiki.context.Execution;
+
 import com.xpn.xwiki.XWiki;
 import com.xpn.xwiki.XWikiContext;
 import com.xpn.xwiki.XWikiException;
@@ -35,7 +41,7 @@ import com.xpn.xwiki.plugin.ratings.AverageRating;
 import com.xpn.xwiki.plugin.ratings.Rating;
 import com.xpn.xwiki.plugin.ratings.RatingsException;
 import com.xpn.xwiki.plugin.ratings.RatingsManager;
-import com.xpn.xwiki.plugin.ratings.ReputationAlgorythm;
+import com.xpn.xwiki.plugin.ratings.ReputationAlgorithm;
 import com.xpn.xwiki.plugin.ratings.ReputationException;
 
 /**
@@ -44,57 +50,60 @@ import com.xpn.xwiki.plugin.ratings.ReputationException;
  */
 public abstract class AbstractRatingsManager implements RatingsManager
 {
-    private static Log LOG = LogFactory.getLog(AbstractRatingsManager.class);
-
     private static String ratingsClassName = "XWiki.RatingsClass";
 
     private static String averageRatingsClassName = "XWiki.AverageRatingsClass";
 
-    private ReputationAlgorythm reputationAlgorythm;
+    /**
+     * The logger to log.
+     */
+    @Inject
+    protected Logger logger;
 
-    private String reputationAlgorythmVersion;
+    @Inject
+    private Execution execution;
 
-    public String getRatingsClassName(XWikiContext context)
+    @Inject
+    private ComponentManager componentManager;
+
+    private ReputationAlgorithm reputationAlgorithm;
+
+    private String reputationAlgorithmVersion;
+
+    public String getRatingsClassName()
     {
         return ratingsClassName;
     }
 
-    public String getAverageRatingsClassName(XWikiContext context)
+    public String getAverageRatingsClassName()
     {
         return averageRatingsClassName;
     }
 
-    public void init(XWikiContext context)
+    @Override
+    public void initialize() throws InitializationException
     {
         try {
-            initRatingsClass(context);
-            initAverageRatingsClass(context);
+            initRatingsClass();
+            initAverageRatingsClass();
         } catch (Exception e) {
-            e.printStackTrace();
+            // FIXME: any backup plan? (Eduard)
+            logger.error("Component initialization failed", e);
         }
     }
 
-    public void virtualInit(XWikiContext context)
-    {
-        try {
-            initRatingsClass(context);
-            initAverageRatingsClass(context);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public BaseClass initAverageRatingsClass(XWikiContext context) throws XWikiException
+    public BaseClass initAverageRatingsClass() throws XWikiException
     {
         XWikiDocument doc;
+        XWikiContext context = getXWikiContext();
         XWiki xwiki = context.getWiki();
         boolean needsUpdate = false;
-        String averageRatingsClassName = getAverageRatingsClassName(context);
+        String averageRatingsClassName = getAverageRatingsClassName();
 
         doc = xwiki.getDocument(averageRatingsClassName, context);
         BaseClass bclass = doc.getxWikiClass();
         bclass.setName(averageRatingsClassName);
-        if (context.get("initdone") != null) {
+        if (context.get("initdone") != null && !doc.isNew()) {
             return bclass;
         }
 
@@ -127,17 +136,18 @@ public abstract class AbstractRatingsManager implements RatingsManager
         return bclass;
     }
 
-    public BaseClass initRatingsClass(XWikiContext context) throws XWikiException
+    public BaseClass initRatingsClass() throws XWikiException
     {
         XWikiDocument doc;
+        XWikiContext context = getXWikiContext();
         XWiki xwiki = context.getWiki();
         boolean needsUpdate = false;
-        String ratingsClassName = getRatingsClassName(context);
+        String ratingsClassName = getRatingsClassName();
 
         doc = xwiki.getDocument(ratingsClassName, context);
         BaseClass bclass = doc.getxWikiClass();
         bclass.setName(ratingsClassName);
-        if (context.get("initdone") != null) {
+        if (context.get("initdone") != null && !doc.isNew()) {
             return bclass;
         }
 
@@ -171,67 +181,80 @@ public abstract class AbstractRatingsManager implements RatingsManager
         return bclass;
     }
 
-    public boolean hasRatings(XWikiContext context)
+    public boolean hasRatings()
     {
+        XWikiContext context = getXWikiContext();
         int result = (int) context.getWiki().ParamAsLong("xwiki.ratings", 0);
         return (context.getWiki().getXWikiPreferenceAsInt("ratings", result, context) == 1);
     }
 
-    public boolean isAverageRatingStored(XWikiContext context)
+    @Override
+    public boolean isAverageRatingStored()
     {
+        XWikiContext context = getXWikiContext();
         int result = (int) context.getWiki().ParamAsLong("xwiki.ratings.averagerating.stored", 1);
         return (context.getWiki().getXWikiPreferenceAsInt("ratings_averagerating_stored", result, context) == 1);
     }
 
-    public boolean isReputationStored(XWikiContext context)
+    @Override
+    public boolean isReputationStored()
     {
+        XWikiContext context = getXWikiContext();
         int result = (int) context.getWiki().ParamAsLong("xwiki.ratings.reputation.stored", 0);
         return (context.getWiki().getXWikiPreferenceAsInt("ratings_reputation_stored", result, context) == 1);
     }
 
-    public boolean hasReputation(XWikiContext context)
+    @Override
+    public boolean hasReputation()
     {
+        XWikiContext context = getXWikiContext();
         int result = (int) context.getWiki().ParamAsLong("xwiki.ratings.reputation", 0);
         return (context.getWiki().getXWikiPreferenceAsInt("ratings_reputation", result, context) == 1);
     }
 
-    public String[] getDefaultReputationMethods(XWikiContext context)
+    @Override
+    public String[] getDefaultReputationMethods()
     {
+        XWikiContext context = getXWikiContext();
         String method =
             context.getWiki().Param("xwiki.ratings.reputation.defaultmethod", RATING_REPUTATION_METHOD_DEFAULT);
         method = context.getWiki().getXWikiPreference("ratings_reputation_defaultmethod", method, context);
         return method.split(",");
     }
 
-    public void updateAverageRatings(String documentName, Rating rating, int oldVote, XWikiContext context)
-        throws RatingsException
+    @Override
+    public void updateAverageRatings(String documentName, Rating rating, int oldVote) throws RatingsException
     {
-        String[] methods = getDefaultReputationMethods(context);
+        String[] methods = getDefaultReputationMethods();
         for (int i = 0; i < methods.length; i++) {
-            updateAverageRating(documentName, rating, oldVote, methods[i], context);
+            updateAverageRating(documentName, rating, oldVote, methods[i]);
         }
     }
 
-    public AverageRating getAverageRatingFromQuery(String fromsql, String wheresql, XWikiContext context)
-        throws RatingsException
+    @Override
+    public AverageRating getAverageRatingFromQuery(String fromsql, String wheresql) throws RatingsException
     {
-        return getAverageRatingFromQuery(fromsql, wheresql, RATING_REPUTATION_METHOD_AVERAGE, context);
+        return getAverageRatingFromQuery(fromsql, wheresql, RATING_REPUTATION_METHOD_AVERAGE);
     }
 
-    public AverageRating getAverageRating(String documentName, XWikiContext context) throws RatingsException
+    @Override
+    public AverageRating getAverageRating(String documentName) throws RatingsException
     {
-        return getAverageRating(documentName, RATING_REPUTATION_METHOD_AVERAGE, context);
+        return getAverageRating(documentName, RATING_REPUTATION_METHOD_AVERAGE);
     }
 
-    public AverageRating getAverageRatingFromQuery(String fromsql, String wheresql, String method, XWikiContext context)
+    @Override
+    public AverageRating getAverageRatingFromQuery(String fromsql, String wheresql, String method)
         throws RatingsException
     {
         try {
+            XWikiContext context = getXWikiContext();
+
             String fromsql2 =
                 fromsql + ", BaseObject as avgobj, FloatProperty as avgvote, StringProperty as avgmethod ";
             String wheresql2 =
                 (wheresql.equals("") ? "where " : wheresql + " and ")
-                    + "doc.fullName=avgobj.name and avgobj.className='" + getAverageRatingsClassName(context)
+                    + "doc.fullName=avgobj.name and avgobj.className='" + getAverageRatingsClassName()
                     + "' and avgobj.id=avgvote.id.id and avgvote.id.name='" + AVERAGERATING_CLASS_FIELDNAME_AVERAGEVOTE
                     + "' and avgobj.id=avgmethod.id.id and avgmethod.id.name='"
                     + AVERAGERATING_CLASS_FIELDNAME_AVERAGEVOTE_METHOD + "' and avgmethod.value='" + method + "'";
@@ -239,8 +262,8 @@ public abstract class AbstractRatingsManager implements RatingsManager
                 "select sum(avgvote.value) as vote, count(avgvote.value) as nbvotes from XWikiDocument as doc "
                     + fromsql2 + wheresql2;
 
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Running average rating with sql " + sql);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Running average rating with sql " + sql);
             }
             context.put("lastsql", sql);
 
@@ -255,86 +278,113 @@ public abstract class AbstractRatingsManager implements RatingsManager
         }
     }
 
-    public boolean removeRating(Rating rating, XWikiContext context) throws RatingsException
+    @Override
+    public boolean removeRating(Rating rating) throws RatingsException
     {
         return rating.remove();
     }
 
     /**
-     * Get the reputation algorythm class. Make sure the version is checked when it is a groovy script
+     * Get the reputation algorithm class. Make sure the version is checked when it is a groovy script
      */
-    public ReputationAlgorythm getReputationAlgorythm(XWikiContext context) throws RatingsException
+    @Override
+    public ReputationAlgorithm getReputationAlgorythm() throws RatingsException
     {
-        String groovyPage = getReputationAlgorythmGroovyPage(context);
-        if (reputationAlgorythm != null) {
-            if ((reputationAlgorythmVersion == null) || (groovyPage == null)) {
-                return reputationAlgorythm;
+        XWikiContext context = getXWikiContext();
+        XWiki xwiki = context.getWiki();
+
+        String groovyPage = getReputationAlgorithmGroovyPage();
+        if (reputationAlgorithm != null) {
+            if ((reputationAlgorithmVersion == null) || (groovyPage == null)) {
+                return reputationAlgorithm;
             } else {
                 XWikiDocument groovyDoc = null;
                 try {
-                    groovyDoc = context.getWiki().getDocument(groovyPage, context);
+                    groovyDoc = xwiki.getDocument(groovyPage, context);
                     String groovyVersion = groovyDoc.getVersion();
                     // version is the same let's use the already loaded one
-                    if (reputationAlgorythmVersion.equals(groovyVersion)) {
-                        return reputationAlgorythm;
+                    if (reputationAlgorithmVersion.equals(groovyVersion)) {
+                        return reputationAlgorithm;
                     }
                 } catch (XWikiException e) {
-                    if (LOG.isErrorEnabled()) {
-                        LOG.error("Could not load reputation algorythm for groovy " + groovyPage, e);
+                    if (logger.isErrorEnabled()) {
+                        logger
+                            .error(
+                                "Could not check if the reputation algorithm loaded from the groovy page '{}' needs reloading. Assuming no.",
+                                groovyPage, e);
                     }
-                    return reputationAlgorythm;
+
+                    // Assume that the page did not change.
+                    return reputationAlgorithm;
                 }
             }
         }
 
+        // If the algorithm is specified in a Groovy page, make sure it is executed and registered before trying to load
+        // it.
         if (groovyPage != null) {
             try {
-                reputationAlgorythm = (ReputationAlgorythm) context.getWiki().parseGroovyFromPage(groovyPage, context);
-                try {
-                    // we should update the version that was used
-                    XWikiDocument groovyDoc = context.getWiki().getDocument(groovyPage, context);
-                    reputationAlgorythmVersion = groovyDoc.getVersion();
-                } catch (Exception e) {
-                }
+                XWikiDocument groovyDoc = xwiki.getDocument(groovyPage, context);
+                // Execute the Groovy script that causes the defined component to get registered.
+                groovyDoc.getRenderedContent(context);
+                // Update the version that was used so that we know next time if we need to reload it because it was
+                // changed.
+                reputationAlgorithmVersion = groovyDoc.getVersion();
             } catch (XWikiException e) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("Could not init reputation algorythm for groovy page " + groovyPage, e);
+                if (logger.isErrorEnabled()) {
+                    logger.error("Could not read reputation algorythm from groovy page {}.", groovyPage, e);
                 }
-                reputationAlgorythm = new DefaultReputationAlgorythm();
-            }
-        } else {
-            String className =
-                context.getWiki().Param("xwiki.ratings.reputation.classname",
-                    "com.xpn.xwiki.plugin.ratings.internal.DefaultReputationAlgorythm");
-
-            try {
-                reputationAlgorythm = (ReputationAlgorythm) Class.forName(className).newInstance();
-            } catch (Exception e) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("Could not init reputation algorythm for class " + className, e);
-                }
-                reputationAlgorythm = new DefaultReputationAlgorythm();
             }
         }
-        reputationAlgorythm.setRatingsManager(this);
-        return reputationAlgorythm;
+
+        String reputationAlgorithmHint = getReputationAlgorithmComponentHint();
+        try {
+            reputationAlgorithm = componentManager.lookup(ReputationAlgorithm.class, reputationAlgorithmHint);
+        } catch (ComponentLookupException e) {
+            if (logger.isErrorEnabled()) {
+                logger.error("Could not initialize reputation algorithm for hint '{}'. Using default instead.",
+                    reputationAlgorithmHint, e);
+            }
+
+            // Use default instead.
+            try {
+                reputationAlgorithm = componentManager.lookup(ReputationAlgorithm.class);
+            } catch (ComponentLookupException e1) {
+                // Fatal, but unlikely since the default is bundled with the module itself.
+                throw new RatingsException(RatingsException.MODULE_PLUGIN_RATINGS,
+                    RatingsException.ERROR_RATINGS_NO_REPUTATION_ALGORITHM, "No reputation algorithm available.", e1);
+            }
+        }
+
+        return reputationAlgorithm;
     }
 
-    private String getReputationAlgorythmGroovyPage(XWikiContext context)
+    private String getReputationAlgorithmGroovyPage()
     {
+        XWikiContext context = getXWikiContext();
+
         String groovyPage = context.getWiki().Param("xwiki.ratings.reputation.groovypage", "");
         groovyPage = context.getWiki().getXWikiPreference("ratings_reputation_groovypage", groovyPage, context);
         return groovyPage;
     }
 
-    public AverageRating calcAverageRating(String documentName, String method, XWikiContext context)
-        throws RatingsException
+    private String getReputationAlgorithmComponentHint()
+    {
+        XWikiContext context = getXWikiContext();
+
+        String groovyPage = context.getWiki().Param("xwiki.ratings.reputation.component", "");
+        groovyPage = context.getWiki().getXWikiPreference("ratings_reputation_component", groovyPage, context);
+        return groovyPage;
+    }
+
+    @Override
+    public AverageRating calcAverageRating(String documentName, String method) throws RatingsException
     {
         int nbVotes = 0;
         int balancedNbVotes = 0;
         float totalVote = 0;
         float averageVote = 0;
-        List<Rating> ratings = getRatings(documentName, 0, 0, true, context);
+        List<Rating> ratings = getRatings(documentName, 0, 0, true);
         if (ratings == null) {
             return null;
         }
@@ -344,7 +394,7 @@ public abstract class AbstractRatingsManager implements RatingsManager
                 // in case we are evaluating the average rating of a user
                 // we should not include votes of himself to a user
                 if (!author.equals(documentName)) {
-                    AverageRating reputation = getUserReputation(author, context);
+                    AverageRating reputation = getUserReputation(author);
                     if ((reputation == null) || (reputation.getAverageVote() == 0)) {
                         totalVote += rating.getVote();
                         balancedNbVotes++;
@@ -366,14 +416,16 @@ public abstract class AbstractRatingsManager implements RatingsManager
         return new MemoryAverageRating(documentName, nbVotes, averageVote, method);
     }
 
-    public void updateAverageRating(String documentName, Rating rating, int oldVote, String method,
-        XWikiContext context)
+    @Override
+    public void updateAverageRating(String documentName, Rating rating, int oldVote, String method)
         throws RatingsException
     {
         // we only update if we are in stored mode and if the vote changed
-        if (isAverageRatingStored(context) && oldVote != rating.getVote()) {
-            AverageRating aRating = calcAverageRating(documentName, method, context);
-            AverageRating averageRating = getAverageRating(documentName, method, true, context);
+        if (isAverageRatingStored() && oldVote != rating.getVote()) {
+            XWikiContext context = getXWikiContext();
+
+            AverageRating aRating = calcAverageRating(documentName, method);
+            AverageRating averageRating = getAverageRating(documentName, method, true);
             averageRating.setAverageVote(aRating.getAverageVote());
             averageRating.setNbVotes(aRating.getNbVotes());
             averageRating.save(context);
@@ -387,24 +439,26 @@ public abstract class AbstractRatingsManager implements RatingsManager
         }
     }
 
-    public void updateReputation(String documentName, Rating rating, int oldVote, XWikiContext context)
-        throws RatingsException
+    @Override
+    public void updateReputation(String documentName, Rating rating, int oldVote) throws RatingsException
     {
+        XWikiContext context = getXWikiContext();
+
         // we only update if we are in stored mode and if the vote changed
-        if (hasReputation(context) && isReputationStored(context) && oldVote != rating.getVote()) {
-            ReputationAlgorythm ralgo = getReputationAlgorythm(context);
+        if (hasReputation() && isReputationStored() && oldVote != rating.getVote()) {
+            ReputationAlgorithm ralgo = getReputationAlgorythm();
             // voter reputation. This will give points to the voter
             try {
                 AverageRating voterRating =
-                    ralgo.calcNewVoterReputation(rating.getAuthor(), documentName, rating, oldVote, context);
+                    ralgo.calcNewVoterReputation(rating.getAuthor(), documentName, rating, oldVote);
                 // we need to save this reputation if it has changed
-                updateUserReputation(rating.getAuthor(), voterRating, context);
+                updateUserReputation(rating.getAuthor(), voterRating);
             } catch (ReputationException e) {
                 if (e.getCode() != ReputationException.ERROR_REPUTATION_NOT_IMPLEMENTED) {
                     // we should log this error
-                    if (LOG.isErrorEnabled()) {
-                        LOG.error("Error while calculating voter reputation " + rating.getAuthor() + " for document "
-                            + documentName, e);
+                    if (logger.isErrorEnabled()) {
+                        logger.error("Error while calculating voter reputation " + rating.getAuthor()
+                            + " for document " + documentName, e);
                     }
                 }
             }
@@ -413,51 +467,49 @@ public abstract class AbstractRatingsManager implements RatingsManager
             try {
                 XWikiDocument doc = context.getWiki().getDocument(documentName, context);
                 AverageRating authorRating =
-                    ralgo.calcNewContributorReputation(doc.getCreator(), documentName, rating, oldVote, context);
+                    ralgo.calcNewContributorReputation(doc.getCreator(), documentName, rating, oldVote);
                 // we need to save the author reputation
-                updateUserReputation(doc.getCreator(), authorRating, context);
+                updateUserReputation(doc.getCreator(), authorRating);
             } catch (ReputationException e) {
                 if (e.getCode() != ReputationException.ERROR_REPUTATION_NOT_IMPLEMENTED) {
                     // we should log this error
-                    if (LOG.isErrorEnabled()) {
-                        LOG.error("Error while calculating author reputation for document "
-                            + documentName, e);
+                    if (logger.isErrorEnabled()) {
+                        logger.error("Error while calculating author reputation for document " + documentName, e);
                     }
                 }
             } catch (XWikiException e) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("Error while calculating author reputation for document " + documentName,
-                        e);
+                if (logger.isErrorEnabled()) {
+                    logger.error("Error while calculating author reputation for document " + documentName, e);
                 }
             }
 
             // all authors reputation. This will be used to give points to all participants to a document
             try {
                 Map<String, AverageRating> authorsRatings =
-                    ralgo.calcNewAuthorsReputation(documentName, rating, oldVote, context);
+                    ralgo.calcNewAuthorsReputation(documentName, rating, oldVote);
                 // TODO this is not implemented yet
             } catch (ReputationException e) {
                 if (e.getCode() != ReputationException.ERROR_REPUTATION_NOT_IMPLEMENTED) {
                     // we should log this error
-                    if (LOG.isErrorEnabled()) {
-                        LOG.error("Error while calculating authors reputation for document "
-                            + documentName, e);
+                    if (logger.isErrorEnabled()) {
+                        logger.error("Error while calculating authors reputation for document " + documentName, e);
                     }
                 }
             } catch (XWikiException e) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("Error while calculating authors for document " + documentName, e);
+                if (logger.isErrorEnabled()) {
+                    logger.error("Error while calculating authors for document " + documentName, e);
                 }
             }
         }
     }
 
-    private void updateUserReputation(String author, AverageRating voterRating, XWikiContext context)
-        throws RatingsException
+    private void updateUserReputation(String author, AverageRating voterRating) throws RatingsException
     {
         try {
+            XWikiContext context = getXWikiContext();
+
             // We should update the user rating
-            AverageRating rating = getAverageRating(author, voterRating.getMethod(), true, context);
+            AverageRating rating = getAverageRating(author, voterRating.getMethod(), true);
             rating.setAverageVote(voterRating.getAverageVote());
             rating.setMethod(voterRating.getMethod());
             rating.setNbVotes(voterRating.getNbVotes());
@@ -467,38 +519,41 @@ public abstract class AbstractRatingsManager implements RatingsManager
         }
     }
 
-    public AverageRating getUserReputation(String username, XWikiContext context) throws RatingsException
+    @Override
+    public AverageRating getUserReputation(String username) throws RatingsException
     {
         try {
-            return getReputationAlgorythm(context).getUserReputation(username, context);
+            return getReputationAlgorythm().getUserReputation(username);
         } catch (ReputationException e) {
             if (e.getCode() == ReputationException.ERROR_REPUTATION_NOT_IMPLEMENTED) {
-                return getAverageRating(username, context);
+                return getAverageRating(username);
             } else {
                 throw e;
             }
         }
     }
 
-    public AverageRating getAverageRating(String documentName, String method, XWikiContext context)
-        throws RatingsException
+    @Override
+    public AverageRating getAverageRating(String documentName, String method) throws RatingsException
     {
-        return getAverageRating(documentName, method, false, context);
+        return getAverageRating(documentName, method, false);
     }
 
-    public AverageRating getAverageRating(String documentName, String method, boolean create, XWikiContext context)
-        throws RatingsException
+    @Override
+    public AverageRating getAverageRating(String documentName, String method, boolean create) throws RatingsException
     {
+        XWikiContext context = getXWikiContext();
+
         try {
-            if (isAverageRatingStored(context)) {
-                String className = getAverageRatingsClassName(context);
+            if (isAverageRatingStored()) {
+                String className = getAverageRatingsClassName();
                 XWikiDocument doc = context.getWiki().getDocument(documentName, context);
                 BaseObject averageRatingObject =
                     doc.getObject(className, RatingsManager.AVERAGERATING_CLASS_FIELDNAME_AVERAGEVOTE_METHOD, method,
                         false);
                 if (averageRatingObject == null) {
                     if (!create) {
-                        return calcAverageRating(documentName, method, context);
+                        return calcAverageRating(documentName, method);
                     }
 
                     // initiate a new average rating object
@@ -509,10 +564,32 @@ public abstract class AbstractRatingsManager implements RatingsManager
 
                 return new StoredAverageRating(doc, averageRatingObject);
             } else {
-                return calcAverageRating(documentName, method, context);
+                return calcAverageRating(documentName, method);
             }
         } catch (XWikiException e) {
             throw new RatingsException(e);
         }
+    }
+
+    @Override
+    public Rating getRating(String documentName, String author) throws RatingsException
+    {
+        if (author == null) {
+            logger.warn("No author specified. Returning null rating.");
+            return null;
+        }
+
+        for (Rating rating : getRatings(documentName, 0, 0, false)) {
+            if (author.equals(rating.getAuthor())) {
+                return rating;
+            }
+        }
+
+        return null;
+    }
+
+    protected XWikiContext getXWikiContext()
+    {
+        return (XWikiContext) execution.getContext().getProperty("xwikicontext");
     }
 }

@@ -1,0 +1,24 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>xwiki-ratings</artifactId>
+    <groupId>org.xwiki.contrib</groupId>
+    <version>1.3-SNAPSHOT</version>
+  </parent>
+  <groupId>org.xwiki.contrib</groupId>
+  <artifactId>xwiki-ratings-reputation-simple</artifactId>
+  <name>XWiki Platform - Ratings - Reputation - Simple</name>
+  <description>Simple reputation algorithm.</description>
+  <dependencies>
+    <dependency>
+      <groupId>org.xwiki.platform</groupId>
+      <artifactId>xwiki-platform-oldcore</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.contrib</groupId>
+      <artifactId>xwiki-ratings-plugin</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+</project>

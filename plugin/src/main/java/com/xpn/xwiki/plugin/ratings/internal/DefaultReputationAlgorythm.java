@@ -21,44 +21,59 @@ package com.xpn.xwiki.plugin.ratings.internal;
 
 import java.util.Map;
 
-import com.xpn.xwiki.XWikiContext;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import org.slf4j.Logger;
+import org.xwiki.component.annotation.Component;
+
 import com.xpn.xwiki.plugin.ratings.AverageRating;
 import com.xpn.xwiki.plugin.ratings.Rating;
+import com.xpn.xwiki.plugin.ratings.RatingsComponent;
 import com.xpn.xwiki.plugin.ratings.RatingsException;
 import com.xpn.xwiki.plugin.ratings.RatingsManager;
-import com.xpn.xwiki.plugin.ratings.ReputationAlgorythm;
+import com.xpn.xwiki.plugin.ratings.ReputationAlgorithm;
 import com.xpn.xwiki.plugin.ratings.ReputationException;
 
 /**
  * Default very simple reputation algorithm. It won't include recalculation put only flow level reputation
- *
+ * 
  * @version $Id$
- * @see ReputationAlgorythm
+ * @see ReputationAlgorithm
  */
-public class DefaultReputationAlgorythm implements ReputationAlgorythm
+@Component
+@Singleton
+public class DefaultReputationAlgorythm implements ReputationAlgorithm
 {
-    protected RatingsManager ratingsManager;
+    @Inject
+    private Logger logger;
 
-    public DefaultReputationAlgorythm()
-    {
-    }
+    @Inject
+    private RatingsComponent ratingsComponent;
 
-    public void setRatingsManager(RatingsManager ratingsManager)
+    @Override
+    public RatingsManager getRatingsManager()
     {
-        this.ratingsManager = ratingsManager;
+        try {
+            return ratingsComponent.getRatingsManager();
+        } catch (Exception e) {
+            logger.error("Failed to get the ratings manager.", e);
+            return null;
+        }
     }
 
     /**
      * Gets or calculates the user reputation.
-     *
+     * 
      * @param username Person to calculate the reputation for
      * @param context context of the request
      * @return AverageRating of the voter
      */
-    public AverageRating getUserReputation(String username, XWikiContext context) throws ReputationException
+    @Override
+    public AverageRating getUserReputation(String username) throws ReputationException
     {
         try {
-            return ratingsManager.getAverageRating(username, RatingsManager.RATING_REPUTATION_METHOD_AVERAGE, context);
+            return getRatingsManager().getAverageRating(username, RatingsManager.RATING_REPUTATION_METHOD_AVERAGE);
         } catch (RatingsException e) {
             throw new ReputationException(e);
         }
@@ -67,8 +82,9 @@ public class DefaultReputationAlgorythm implements ReputationAlgorythm
     /**
      * Not implemented. Voters don't receive reputation
      */
-    public AverageRating calcNewVoterReputation(String voter, String documentName, Rating rating, int oldVote,
-        XWikiContext context) throws ReputationException
+    @Override
+    public AverageRating calcNewVoterReputation(String voter, String documentName, Rating rating, int oldVote)
+        throws ReputationException
     {
         notimplemented();
         return null;
@@ -77,8 +93,9 @@ public class DefaultReputationAlgorythm implements ReputationAlgorythm
     /**
      * Implemented. Authors will receive a simple reputation.
      */
+    @Override
     public AverageRating calcNewContributorReputation(String contributor, String documentName, Rating rating,
-        int oldVote, XWikiContext context) throws ReputationException
+        int oldVote) throws ReputationException
     {
         notimplemented();
         return null;
@@ -87,8 +104,9 @@ public class DefaultReputationAlgorythm implements ReputationAlgorythm
     /**
      * Not implemented
      */
-    public Map<String, AverageRating> calcNewAuthorsReputation(String documentName, Rating rating, int oldVote,
-        XWikiContext context) throws ReputationException
+    @Override
+    public Map<String, AverageRating> calcNewAuthorsReputation(String documentName, Rating rating, int oldVote)
+        throws ReputationException
     {
         notimplemented();
         return null;
@@ -97,7 +115,8 @@ public class DefaultReputationAlgorythm implements ReputationAlgorythm
     /**
      * Not implemented
      */
-    public Map<String, AverageRating> recalcAllReputation(XWikiContext context) throws ReputationException
+    @Override
+    public Map<String, AverageRating> recalcAllReputation() throws ReputationException
     {
         notimplemented();
         return null;

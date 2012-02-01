@@ -20,12 +20,13 @@
 package com.xpn.xwiki.plugin.ratings;
 
 import com.xpn.xwiki.api.Api;
+import com.xpn.xwiki.plugin.ratings.internal.RatingsScriptService;
 import com.xpn.xwiki.XWikiContext;
 
 import java.util.Date;
 
 /**
- * Wrapper around a {@link Rating}, typically returned by the {@link RatingsPluginApi} and manipulated using a scripting
+ * Wrapper around a {@link Rating}, typically returned by the {@link RatingsScriptService} and manipulated using a scripting
  * language in the wiki.
  *
  * @version $Id$

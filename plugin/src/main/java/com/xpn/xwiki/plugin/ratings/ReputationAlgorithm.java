@@ -19,73 +19,69 @@
  */
 package com.xpn.xwiki.plugin.ratings;
 
-import com.xpn.xwiki.XWikiContext;
-
 import java.util.Map;
+
+import org.xwiki.component.annotation.ComponentRole;
 
 /**
  * @version $Id$
  */
-public interface ReputationAlgorythm
+@ComponentRole
+public interface ReputationAlgorithm
 {
     /**
-     * Set the ratings manager. This should be implemented
+     * @return the current ratings manager.
      */
-    public void setRatingsManager(RatingsManager ratingsManager);
+    public RatingsManager getRatingsManager();
 
     /**
      * Gets or calculates the user reputation.
-     *
+     * 
      * @param username Person to calculate the reputation for
-     * @param context context of the request
      * @return AverageRating of the voter
      */
-    AverageRating getUserReputation(String username, XWikiContext context) throws ReputationException;
+    AverageRating getUserReputation(String username) throws ReputationException;
 
     /**
      * Recalculates the contributor reputation. Only the creator of the document will have it's reputation updated
-     *
+     * 
      * @param voter Voter that will have it's reputation updated
      * @param documentName Elements that was rated
      * @param rating New rating of the element, including who did the rating
      * @param oldVote previous vote of the user
-     * @param context context of the request
      * @return AverageRating of the voter
      */
-    AverageRating calcNewVoterReputation(String voter, String documentName, Rating rating, int oldVote,
-        XWikiContext context) throws ReputationException;
+    AverageRating calcNewVoterReputation(String voter, String documentName, Rating rating, int oldVote)
+        throws ReputationException;
 
     /**
      * Recalculates the contributors reputation
-     *
+     * 
      * @param documentName Elements that was rated
      * @param rating New rating of the element, including who did the rating
      * @param oldVote previous vote of the user
-     * @param context context of the request
      * @return Map of AverageRating of each contributor of the page that has an updated reputation
      */
-    Map<String, AverageRating> calcNewAuthorsReputation(String documentName, Rating rating, int oldVote,
-        XWikiContext context) throws ReputationException;
+    Map<String, AverageRating> calcNewAuthorsReputation(String documentName, Rating rating, int oldVote)
+        throws ReputationException;
 
     /**
      * Recalculates the contributor reputation. Only the creator of the document will have it's reputation updated
-     *
+     * 
      * @param contributor Contributor that will have it's reputation updated
      * @param documentName Elements that was rated
      * @param rating New rating of the element, including who did the rating
      * @param oldVote previous vote of the user
-     * @param context context of the request
      * @return AverageRating of the contributor
      */
-    AverageRating calcNewContributorReputation(String contributor, String documentName, Rating rating, int oldVote,
-        XWikiContext context) throws ReputationException;
+    AverageRating calcNewContributorReputation(String contributor, String documentName, Rating rating, int oldVote)
+        throws ReputationException;
 
     /**
      * Recalculated all reputation of the wiki The result is given as a set of AverageRating objects That can be saved
      * to the user page
-     *
-     * @param context context of the request
+     * 
      * @return Map of AverageRating of each user of the wiki
      */
-    Map<String, AverageRating> recalcAllReputation(XWikiContext context) throws ReputationException;
+    Map<String, AverageRating> recalcAllReputation() throws ReputationException;
 }

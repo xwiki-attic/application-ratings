@@ -1,0 +1,4 @@
+com.xpn.xwiki.plugin.ratings.internal.DefaultRatingsComponent
+com.xpn.xwiki.plugin.ratings.internal.DefaultRatingsManager
+com.xpn.xwiki.plugin.ratings.internal.DefaultReputationAlgorythm
+com.xpn.xwiki.plugin.ratings.internal.RatingsScriptService

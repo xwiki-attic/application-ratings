@@ -29,7 +29,6 @@ import com.xpn.xwiki.objects.BaseProperty;
 import com.xpn.xwiki.plugin.ratings.Rating;
 import com.xpn.xwiki.plugin.ratings.RatingsException;
 import com.xpn.xwiki.plugin.ratings.RatingsManager;
-import com.xpn.xwiki.plugin.ratings.RatingsPlugin;
 
 /**
  * @see Rating
@@ -44,24 +43,30 @@ public class DefaultRating implements Rating
 
     private XWikiContext context;
 
-    public DefaultRating(String documentName, String author, int vote, XWikiContext context)
+    private RatingsManager ratingsManager;
+
+    public DefaultRating(String documentName, String author, int vote, RatingsManager ratingsManager,
+        XWikiContext context)
     {
-        this(documentName, author, new Date(), vote, context);
+        this(documentName, author, new Date(), vote, ratingsManager, context);
     }
 
-    public DefaultRating(String documentName, String author, Date date, int vote, XWikiContext context)
+    public DefaultRating(String documentName, String author, Date date, int vote, RatingsManager ratingsManager,
+        XWikiContext context)
     {
         this.context = context;
         this.documentName = documentName;
+        this.ratingsManager = ratingsManager;
 
         createObject(documentName, author, date, vote);
     }
 
-    public DefaultRating(String documentName, BaseObject obj, XWikiContext context)
+    public DefaultRating(String documentName, BaseObject obj, RatingsManager ratingsManager, XWikiContext context)
     {
         this.context = context;
         this.documentName = documentName;
-        
+        this.ratingsManager = ratingsManager;
+
         this.document = getDocument();
         this.object = obj;
 
@@ -69,24 +74,23 @@ public class DefaultRating implements Rating
 
     public RatingsManager getRatingsManager()
     {
-        return ((RatingsPlugin) context.getWiki().getPlugin(RatingsPlugin.RATINGS_PLUGIN_NAME, context))
-            .getRatingsManager(context);
+        return ratingsManager;
     }
 
     /**
-     * RatingId represente the rating ID. It is the object number in the default ratings case
+     * RatingId represents the rating ID. It is the object number in the default ratings case
      */
     public String getRatingId()
     {
-        return "" + object.getNumber();
+        return String.valueOf(object.getNumber());
     }
 
     /**
-     * RatingId represente the rating ID. It is the object number in the default ratings case
+     * RatingId represents the rating ID. It is the object number in the default ratings case
      */
     public String getGlobalRatingId()
     {
-        return document.getFullName() + ":" + object.getNumber();
+        return String.format("%s:%s", document.getFullName(), ":", object.getNumber());
     }
 
     public BaseObject getAsObject()
@@ -106,11 +110,7 @@ public class DefaultRating implements Rating
         return document;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @see com.xpn.xwiki.plugin.ratings.Rating#getAuthor()
-     */
+    @Override
     public String getAuthor()
     {
         return object.getStringValue(RatingsManager.RATING_CLASS_FIELDNAME_AUTHOR);
@@ -121,11 +121,7 @@ public class DefaultRating implements Rating
         object.setStringValue(RatingsManager.RATING_CLASS_FIELDNAME_AUTHOR, author);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @see com.xpn.xwiki.plugin.ratings.Rating#getDate()
-     */
+    @Override
     public Date getDate()
     {
         return object.getDateValue(RatingsManager.RATING_CLASS_FIELDNAME_DATE);
@@ -136,11 +132,7 @@ public class DefaultRating implements Rating
         object.setDateValue(RatingsManager.RATING_CLASS_FIELDNAME_DATE, date);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @see com.xpn.xwiki.plugin.ratings.Rating#getVote()
-     */
+    @Override
     public int getVote()
     {
         return object.getIntValue(RatingsManager.RATING_CLASS_FIELDNAME_VOTE);
@@ -151,11 +143,7 @@ public class DefaultRating implements Rating
         object.setIntValue("vote", vote);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @see com.xpn.xwiki.plugin.ratings.Rating#get(String)
-     */
+    @Override
     public Object get(String propertyName)
     {
         try {
@@ -165,26 +153,19 @@ public class DefaultRating implements Rating
         }
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @see com.xpn.xwiki.plugin.ratings.Rating#display(String,String, com.xpn.xwiki.XWikiContext)
-     */
+    @Override
     public String display(String propertyName, String mode, XWikiContext context)
     {
         return document.display(propertyName, mode, object, context);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @see com.xpn.xwiki.plugin.ratings.Rating#getDocumentName()
-     */
+    @Override
     public String getDocumentName()
     {
         return this.documentName;
     }
 
+    @Override
     public void save() throws RatingsException
     {
         try {
@@ -204,21 +185,13 @@ public class DefaultRating implements Rating
         }
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @see com.xpn.xwiki.plugin.ratings.Rating#remove()
-     */
+    @Override
     public boolean remove()
     {
         return remove(true);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @see com.xpn.xwiki.plugin.ratings.Rating#remove()
-     */
+    /** @see com.xpn.xwiki.plugin.ratings.Rating#remove() */
     protected boolean remove(boolean withSave)
     {
         try {
@@ -242,7 +215,7 @@ public class DefaultRating implements Rating
     {
         XWikiDocument doc = getDocument();
 
-        String ratingsClassName = getRatingsManager().getRatingsClassName(context);
+        String ratingsClassName = getRatingsManager().getRatingsClassName();
         BaseObject obj = new BaseObject();
         obj.setClassName(ratingsClassName);
         obj.setName(doc.getFullName());
@@ -256,6 +229,7 @@ public class DefaultRating implements Rating
         object = obj;
     }
 
+    @Override
     public String toString()
     {
         boolean shouldAddSpace = false;

@@ -31,6 +31,8 @@
   <modules>
     <module>plugin</module>
     <module>application</module>
+    <module>xwiki-ratings-separatepage</module>
+    <module>xwiki-ratings-reputation-simple</module>
   </modules>
   <dependencyManagement>
     <dependencies>

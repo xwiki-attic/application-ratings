@@ -40,6 +40,10 @@ public class RatingsException extends XWikiException
 
     public static final int ERROR_RATINGS_SAVERATING_NULLDOCUMENT = 1120005;
 
+    public static final int ERROR_RATINGS_NO_RATINGS_MANAGER = 1120006;
+
+    public static final int ERROR_RATINGS_NO_REPUTATION_ALGORITHM = 1120007;
+
     public RatingsException()
     {
     }

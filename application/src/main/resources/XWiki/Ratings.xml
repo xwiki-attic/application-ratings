@@ -13,13 +13,13 @@
 <creationDate>1223390115000</creationDate>
 <date>1293055511000</date>
 <contentUpdateDate>1293055511000</contentUpdateDate>
-<version>7.102</version>
+<version>1.1</version>
 <title></title>
 <template></template>
 <defaultTemplate></defaultTemplate>
 <validationScript></validationScript>
 <comment></comment>
-<minorEdit>true</minorEdit>
+<minorEdit>false</minorEdit>
 <syntaxId>xwiki/2.0</syntaxId>
 <hidden>false</hidden><attachment>
 <filename>star.gif</filename>
@@ -516,8 +516,8 @@ div.ratingWrapper ul.rating {
  * Macro that displays the rating for a document
  *#
 #macro(displayDocumentRating $document)
-#set($averageRating = $xwiki.ratings.getAverageRating($document))
-#set($userRating = $xwiki.ratings.getRating($document, $context.user))
+#set($averageRating = $services.ratings.getAverageRating($document))
+#set($userRating = $services.ratings.getRating($document, $context.user))
 #set($displayedWidth = $mathtool.mul($averageRating.averageVote, 20))
 &lt;div class="ratingContainer"&gt;
   &lt;div class="averageRating"&gt;
@@ -562,15 +562,15 @@ $response.setContentType('application/json')
     #set($rdoc = $xwiki.getDocument($request.doc))
     #set($vote = $util.parseInt($request.vote))
     #if($vote &gt; 0 &amp;&amp; $vote &lt;= 5)
-      #set($ok = $xwiki.ratings.setRating($rdoc, $context.user, $vote))
+      #set($ok = $services.ratings.setRating($rdoc, $context.user, $vote))
       #if($ok) 
         #if("$!{request.method}" != "")
-          #set($ar = $xwiki.ratings.getAverageRating($rdoc, $request.method))
+          #set($ar = $services.ratings.getAverageRating($rdoc, $request.method))
         #else
-          #set($ar = $xwiki.ratings.getAverageRating($rdoc))
+          #set($ar = $services.ratings.getAverageRating($rdoc))
         #end
         #set($avgvote = $ar.averageVote)
-        #set($uservote = $xwiki.ratings.getRating($rdoc, $context.user))
+        #set($uservote = $services.ratings.getRating($rdoc, $context.user))
         #set($nbVotes = $ar.nbVotes)
         #set($userVoteDisplayValue = $msg.get('rating.yourVote', ["&lt;span class='yourVoteValue'&gt;${uservote.vote}&lt;/span&gt;"]))
         "averageVote" : "$escapetool.javascript($avgvote)",

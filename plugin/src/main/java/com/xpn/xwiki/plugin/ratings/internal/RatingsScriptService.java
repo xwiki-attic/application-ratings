@@ -17,41 +17,52 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package com.xpn.xwiki.plugin.ratings;
+package com.xpn.xwiki.plugin.ratings.internal;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
+import org.xwiki.component.annotation.Component;
+import org.xwiki.context.Execution;
+import org.xwiki.script.service.ScriptService;
 
 import com.xpn.xwiki.XWikiContext;
 import com.xpn.xwiki.api.Document;
-import com.xpn.xwiki.plugin.PluginApi;
+import com.xpn.xwiki.plugin.ratings.AverageRatingApi;
 import com.xpn.xwiki.plugin.ratings.Rating;
-
-import java.util.List;
-import java.util.ArrayList;
+import com.xpn.xwiki.plugin.ratings.RatingApi;
+import com.xpn.xwiki.plugin.ratings.RatingsComponent;
 
 /**
  * @version $Id$
  */
-public class RatingsPluginApi extends PluginApi<RatingsPlugin>
+@Component
+@Named("ratings")
+@Singleton
+public class RatingsScriptService implements ScriptService
 {
-    public RatingsPluginApi(RatingsPlugin plugin, XWikiContext context)
+    @Inject
+    private RatingsComponent ratingsComponent;
+
+    @Inject
+    private Execution execution;
+
+    protected RatingsComponent getRatingsComponent()
     {
-        super(plugin, context);
+        return ratingsComponent;
     }
 
-    protected RatingsManager getRatingsManager()
-    {
-        return getRatingsPlugin().getRatingsManager(context);
-    }
-
-    protected RatingsPlugin getRatingsPlugin()
-    {
-        return ((RatingsPlugin) getProtectedPlugin());
-    }
-
-    protected static List<RatingApi> wrapRatings(List<Rating> ratings, XWikiContext context)
+    protected List<RatingApi> wrapRatings(List<Rating> ratings)
     {
         if (ratings == null) {
             return null;
         }
+
+        XWikiContext context = getXWikiContext();
 
         List<RatingApi> ratingsResult = new ArrayList<RatingApi>();
         for (Rating rating : ratings) {
@@ -62,10 +73,12 @@ public class RatingsPluginApi extends PluginApi<RatingsPlugin>
 
     public RatingApi setRating(Document doc, String author, int vote)
     {
+        XWikiContext context = getXWikiContext();
+
         // TODO protect this with programming rights
         // and add a setRating(docName), not protected but for which the author is retrieved from context.
         try {
-            return new RatingApi(getRatingsPlugin().setRating(doc.getFullName(), author, vote, context), context);
+            return new RatingApi(getRatingsComponent().setRating(doc.getFullName(), author, vote), context);
         } catch (Throwable e) {
             context.put("exception", e);
             return null;
@@ -74,10 +87,10 @@ public class RatingsPluginApi extends PluginApi<RatingsPlugin>
 
     public RatingApi getRating(Document doc, String author)
     {
+        XWikiContext context = getXWikiContext();
+
         try {
-            Rating rating =
-                getRatingsPlugin()
-                    .getRating(doc.getFullName(), author, context);
+            Rating rating = getRatingsComponent().getRating(doc.getFullName(), author);
             if (rating == null) {
                 return null;
             }
@@ -95,8 +108,10 @@ public class RatingsPluginApi extends PluginApi<RatingsPlugin>
 
     public List<RatingApi> getRatings(Document doc, int start, int count, boolean asc)
     {
+        XWikiContext context = getXWikiContext();
+
         try {
-            return wrapRatings(getRatingsPlugin().getRatings(doc.getFullName(), start, count, asc, context), context);
+            return wrapRatings(getRatingsComponent().getRatings(doc.getFullName(), start, count, asc));
         } catch (Exception e) {
             context.put("exception", e);
             return null;
@@ -105,9 +120,10 @@ public class RatingsPluginApi extends PluginApi<RatingsPlugin>
 
     public AverageRatingApi getAverageRating(Document doc, String method)
     {
+        XWikiContext context = getXWikiContext();
+
         try {
-            return new AverageRatingApi(getRatingsPlugin().getAverageRating(doc.getFullName(), method, context),
-                context);
+            return new AverageRatingApi(getRatingsComponent().getAverageRating(doc.getFullName(), method), context);
         } catch (Throwable e) {
             context.put("exception", e);
             return null;
@@ -116,8 +132,10 @@ public class RatingsPluginApi extends PluginApi<RatingsPlugin>
 
     public AverageRatingApi getAverageRating(Document doc)
     {
+        XWikiContext context = getXWikiContext();
+
         try {
-            return new AverageRatingApi(getRatingsPlugin().getAverageRating(doc.getFullName(), context), context);
+            return new AverageRatingApi(getRatingsComponent().getAverageRating(doc.getFullName()), context);
         } catch (Throwable e) {
             context.put("exception", e);
             return null;
@@ -126,9 +144,10 @@ public class RatingsPluginApi extends PluginApi<RatingsPlugin>
 
     public AverageRatingApi getAverageRating(String fromsql, String wheresql, String method)
     {
+        XWikiContext context = getXWikiContext();
+
         try {
-            return new AverageRatingApi(getRatingsPlugin().getAverageRating(fromsql, wheresql, method, context),
-                context);
+            return new AverageRatingApi(getRatingsComponent().getAverageRating(fromsql, wheresql, method), context);
         } catch (Throwable e) {
             context.put("exception", e);
             return null;
@@ -137,9 +156,10 @@ public class RatingsPluginApi extends PluginApi<RatingsPlugin>
 
     public AverageRatingApi getAverageRating(String fromsql, String wheresql)
     {
+        XWikiContext context = getXWikiContext();
+
         try {
-            return new AverageRatingApi(getRatingsPlugin().getAverageRatingFromQuery(fromsql, wheresql, context),
-                context);
+            return new AverageRatingApi(getRatingsComponent().getAverageRatingFromQuery(fromsql, wheresql), context);
         } catch (Throwable e) {
             context.put("exception", e);
             return null;
@@ -148,11 +168,18 @@ public class RatingsPluginApi extends PluginApi<RatingsPlugin>
 
     public AverageRatingApi getUserReputation(String username)
     {
+        XWikiContext context = getXWikiContext();
+
         try {
-            return new AverageRatingApi(getRatingsPlugin().getUserReputation(username, context), context);
+            return new AverageRatingApi(getRatingsComponent().getUserReputation(username), context);
         } catch (Throwable e) {
             context.put("exception", e);
             return null;
         }
+    }
+
+    protected XWikiContext getXWikiContext()
+    {
+        return (XWikiContext) execution.getContext().getProperty("xwikicontext");
     }
 }

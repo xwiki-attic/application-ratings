@@ -19,77 +19,77 @@
  */
 package com.xpn.xwiki.plugin.ratings;
 
-import com.xpn.xwiki.XWikiContext;
-
 import java.util.List;
 
-public interface RatingsManager
+import org.xwiki.component.annotation.ComponentRole;
+import org.xwiki.component.phase.Initializable;
+
+@ComponentRole
+public interface RatingsManager extends Initializable
 {
     String RATING_CLASS_FIELDNAME_DATE = "date";
+
     String RATING_CLASS_FIELDNAME_AUTHOR = "author";
+
     String RATING_CLASS_FIELDNAME_VOTE = "vote";
+
     String RATING_CLASS_FIELDNAME_PARENT = "parent";
+
     String AVERAGERATING_CLASS_FIELDNAME_NBVOTES = "nbvotes";
+
     String AVERAGERATING_CLASS_FIELDNAME_AVERAGEVOTE = "averagevote";
+
     String AVERAGERATING_CLASS_FIELDNAME_AVERAGEVOTE_METHOD = "method";
+
     String RATING_REPUTATION_METHOD_BALANCED = "balanced";
+
     String RATING_REPUTATION_METHOD_AVERAGE = "average";
+
     String RATING_REPUTATION_METHOD_DEFAULT = "average";
 
-    void init(XWikiContext context);
+    String getRatingsClassName();
 
-    void virtualInit(XWikiContext context);
+    List<Rating> getRatings(String documentName, int start, int count, boolean asc) throws RatingsException;
 
-    String getRatingsClassName(XWikiContext context);
+    Rating getRating(String ratingId) throws RatingsException;
 
-    List<Rating> getRatings(String documentName, int start, int count, boolean asc, XWikiContext context)
-        throws RatingsException;
+    Rating getRating(String documentName, int id) throws RatingsException;
 
-    Rating getRating(String ratingId, XWikiContext context) throws RatingsException;
+    Rating getRating(String documentName, String user) throws RatingsException;
 
-    Rating getRating(String documentName, int id, XWikiContext context) throws RatingsException;
+    Rating setRating(String documentName, String author, int vote) throws RatingsException;
 
-    Rating getRating(String documentName, String user, XWikiContext context) throws RatingsException;
-
-    Rating setRating(String documentName, String author, int vote, XWikiContext context) throws RatingsException;
-
-    boolean removeRating(Rating rating, XWikiContext context) throws RatingsException;
+    boolean removeRating(Rating rating) throws RatingsException;
 
     // average rating and reputation
 
-    boolean isAverageRatingStored(XWikiContext context);
+    boolean isAverageRatingStored();
 
-    boolean isReputationStored(XWikiContext context);
+    boolean isReputationStored();
 
-    boolean hasReputation(XWikiContext context);
+    boolean hasReputation();
 
-    String[] getDefaultReputationMethods(XWikiContext context);
+    String[] getDefaultReputationMethods();
 
-    AverageRating getAverageRating(String documentName, XWikiContext context) throws RatingsException;
+    AverageRating getAverageRating(String documentName) throws RatingsException;
 
-    AverageRating getAverageRating(String documentName, String method, XWikiContext context) throws RatingsException;
+    AverageRating getAverageRating(String documentName, String method) throws RatingsException;
 
-    AverageRating getAverageRatingFromQuery(String fromsql, String wheresql, XWikiContext context)
-        throws RatingsException;
+    AverageRating getAverageRatingFromQuery(String fromsql, String wheresql) throws RatingsException;
 
-    AverageRating getAverageRatingFromQuery(String fromsql, String wheresql, String method, XWikiContext context)
-        throws RatingsException;
+    AverageRating getAverageRatingFromQuery(String fromsql, String wheresql, String method) throws RatingsException;
 
-    AverageRating getAverageRating(String documentName, String method, boolean create, XWikiContext context)
-        throws RatingsException;
+    AverageRating getAverageRating(String documentName, String method, boolean create) throws RatingsException;
 
-    AverageRating calcAverageRating(String documentName, String method, XWikiContext context) throws RatingsException;
+    AverageRating calcAverageRating(String documentName, String method) throws RatingsException;
 
-    void updateAverageRating(String documentName, Rating rating, int oldVote, String method, XWikiContext context)
-        throws RatingsException;
+    void updateAverageRating(String documentName, Rating rating, int oldVote, String method) throws RatingsException;
 
-    void updateReputation(String documentName, Rating rating, int oldVote, XWikiContext context)
-        throws RatingsException;
+    void updateReputation(String documentName, Rating rating, int oldVote) throws RatingsException;
 
-    void updateAverageRatings(String documentName, Rating rating, int oldVote, XWikiContext context)
-        throws RatingsException;
+    void updateAverageRatings(String documentName, Rating rating, int oldVote) throws RatingsException;
 
-    AverageRating getUserReputation(String username, XWikiContext context) throws RatingsException;
+    AverageRating getUserReputation(String username) throws RatingsException;
 
-    ReputationAlgorythm getReputationAlgorythm(XWikiContext context) throws RatingsException;
+    ReputationAlgorithm getReputationAlgorythm() throws RatingsException;
 }
