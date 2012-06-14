@@ -101,7 +101,7 @@ public abstract class AbstractRatingsManager implements RatingsManager
         String averageRatingsClassName = getAverageRatingsClassName();
 
         doc = xwiki.getDocument(averageRatingsClassName, context);
-        BaseClass bclass = doc.getxWikiClass();
+        BaseClass bclass = doc.getXClass();
         bclass.setName(averageRatingsClassName);
         if (context.get("initdone") != null && !doc.isNew()) {
             return bclass;
@@ -145,7 +145,7 @@ public abstract class AbstractRatingsManager implements RatingsManager
         String ratingsClassName = getRatingsClassName();
 
         doc = xwiki.getDocument(ratingsClassName, context);
-        BaseClass bclass = doc.getxWikiClass();
+        BaseClass bclass = doc.getXClass();
         bclass.setName(ratingsClassName);
         if (context.get("initdone") != null && !doc.isNew()) {
             return bclass;
@@ -339,7 +339,7 @@ public abstract class AbstractRatingsManager implements RatingsManager
 
         String reputationAlgorithmHint = getReputationAlgorithmComponentHint();
         try {
-            reputationAlgorithm = componentManager.lookup(ReputationAlgorithm.class, reputationAlgorithmHint);
+            reputationAlgorithm = componentManager.getInstance(ReputationAlgorithm.class, reputationAlgorithmHint);
         } catch (ComponentLookupException e) {
             if (logger.isErrorEnabled()) {
                 logger.error("Could not initialize reputation algorithm for hint '{}'. Using default instead.",
@@ -348,7 +348,7 @@ public abstract class AbstractRatingsManager implements RatingsManager
 
             // Use default instead.
             try {
-                reputationAlgorithm = componentManager.lookup(ReputationAlgorithm.class);
+                reputationAlgorithm = componentManager.getInstance(ReputationAlgorithm.class);
             } catch (ComponentLookupException e1) {
                 // Fatal, but unlikely since the default is bundled with the module itself.
                 throw new RatingsException(RatingsException.MODULE_PLUGIN_RATINGS,

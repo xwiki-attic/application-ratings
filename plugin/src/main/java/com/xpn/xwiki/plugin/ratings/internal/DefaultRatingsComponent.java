@@ -69,13 +69,13 @@ public class DefaultRatingsComponent implements RatingsComponent
                 logger.debug("Initializing ratings manager with hint '{}'", ratingsManagerHint);
 
                 try {
-                    this.ratingsManager = componentManager.lookup(RatingsManager.class, ratingsManagerHint);
+                    this.ratingsManager = componentManager.getInstance(RatingsManager.class, ratingsManagerHint);
                 } catch (ComponentLookupException e) {
                     logger.error("Could not initialize ratings manager for hint '{}'. Using default instead.",
                         ratingsManagerHint, e);
 
                     try {
-                        this.ratingsManager = componentManager.lookup(RatingsManager.class);
+                        this.ratingsManager = componentManager.getInstance(RatingsManager.class);
                     } catch (ComponentLookupException e1) {
                         // Fatal, but unlikely since the default is bundled with the module itself.
                         throw new RatingsException(RatingsException.MODULE_PLUGIN_RATINGS,
