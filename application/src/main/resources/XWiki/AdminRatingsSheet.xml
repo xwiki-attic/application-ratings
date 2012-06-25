@@ -21,7 +21,7 @@
   <validationScript/>
   <comment/>
   <minorEdit>false</minorEdit>
-  <syntaxId>xwiki/1.0</syntaxId>
+  <syntaxId>xwiki/2.1</syntaxId>
   <hidden>false</hidden>
   <attachment>
     <filename>ratingspreview.png</filename>
@@ -974,7 +974,8 @@ NPcsfSsVcgqbfsl6tRHqiVDnq22coAiZ9UrbBqHDFzJN+/D825Y60W/PTT1PrbJZIlQjLsr0UX5r
 +Qseko7VvWvT/YpRZSjfcJCSEdp/mGHJlxCj3tNtEpbxh4UMq2v2HuddadFNS+05gDVgxO37b+2D
 36T3IHdz2Zm3H4VhaZw2DIeLUN0EkzmXqENPLb3rmPPivOtJTIZqp+vo/ZUZWCZi0YXefx0H59wd
 8rqLsWksf5N+rpQP0kQcjfCtrst1lFIRxez+4L2WObzH7pU7NoIVpIf8QpWCkdleo3z0wfvBoOFn
-OAO7egZ+AnY/j7cc5N0CAAAAAElFTkSuQmCC</content>
+OAO7egZ+AnY/j7cc5N0CAAAAAElFTkSuQmCC
+</content>
   </attachment>
   <attachment>
     <filename>ratings.png</filename>
@@ -1277,8 +1278,156 @@ V08115Nehkn3Pin9X/T3Vfr8OsloUXUiUA8uYKLr9TqmaWLb9uhgOoqSwOwhpUEcx8zPzxMEAZ7n
 QnDONgkYOSZ83x/wZSRxRsOgvOHsHu/ned5TgXvjAI2bk7PAnATkRUH8RUC9bN9PQ4ZjN6wdpSgK
 2WwWRVGemMnnmujhmzJcaA3fmvGcmDiORzN2mIZxcvbGcXzqIuBk23lgnddvkt5F2z9rchKbIdCS
 JD2Ry3RhgIeSGhR1hI9BO7noOi+k5KIgXWQGXuQ5v2ly2rgMS/OdrNR6YRM9lHHQTqoNQR72G+9/
-UbDOu/dbeVpO7n9P2wv/HNtYCnD0+2baAAAAAElFTkSuQmCC</content>
+UbDOu/dbeVpO7n9P2wv/HNtYCnD0+2baAAAAAElFTkSuQmCC
+</content>
   </attachment>
+  <object>
+    <class>
+      <name>XWiki.ConfigurableClass</name>
+      <customClass/>
+      <customMapping/>
+      <defaultViewSheet/>
+      <defaultEditSheet/>
+      <defaultWeb/>
+      <nameField/>
+      <validationScript/>
+      <codeToExecute>
+        <disabled>0</disabled>
+        <editor>---</editor>
+        <name>codeToExecute</name>
+        <number>7</number>
+        <picker>0</picker>
+        <prettyName>codeToExecute</prettyName>
+        <rows>5</rows>
+        <size>40</size>
+        <unmodifiable>0</unmodifiable>
+        <validationMessage/>
+        <validationRegExp/>
+        <classType>com.xpn.xwiki.objects.classes.TextAreaClass</classType>
+      </codeToExecute>
+      <configurationClass>
+        <disabled>0</disabled>
+        <name>configurationClass</name>
+        <number>3</number>
+        <picker>0</picker>
+        <prettyName>configurationClass</prettyName>
+        <size>30</size>
+        <unmodifiable>0</unmodifiable>
+        <validationMessage/>
+        <validationRegExp/>
+        <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
+      </configurationClass>
+      <configureGlobally>
+        <defaultValue/>
+        <disabled>0</disabled>
+        <displayFormType>checkbox</displayFormType>
+        <displayType/>
+        <name>configureGlobally</name>
+        <number>4</number>
+        <prettyName>configureGlobally</prettyName>
+        <unmodifiable>0</unmodifiable>
+        <validationMessage/>
+        <validationRegExp/>
+        <classType>com.xpn.xwiki.objects.classes.BooleanClass</classType>
+      </configureGlobally>
+      <displayInSection>
+        <disabled>0</disabled>
+        <name>displayInSection</name>
+        <number>1</number>
+        <picker>0</picker>
+        <prettyName>displayInSection</prettyName>
+        <size>30</size>
+        <unmodifiable>0</unmodifiable>
+        <validationMessage/>
+        <validationRegExp/>
+        <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
+      </displayInSection>
+      <heading>
+        <disabled>0</disabled>
+        <name>heading</name>
+        <number>2</number>
+        <picker>0</picker>
+        <prettyName>heading</prettyName>
+        <size>30</size>
+        <unmodifiable>0</unmodifiable>
+        <validationMessage/>
+        <validationRegExp/>
+        <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
+      </heading>
+      <iconAttachment>
+        <disabled>0</disabled>
+        <name>iconAttachment</name>
+        <number>8</number>
+        <picker>0</picker>
+        <prettyName>iconAttachment</prettyName>
+        <size>30</size>
+        <unmodifiable>0</unmodifiable>
+        <validationMessage/>
+        <validationRegExp/>
+        <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
+      </iconAttachment>
+      <linkPrefix>
+        <disabled>0</disabled>
+        <name>linkPrefix</name>
+        <number>5</number>
+        <picker>0</picker>
+        <prettyName>linkPrefix</prettyName>
+        <size>30</size>
+        <unmodifiable>0</unmodifiable>
+        <validationMessage/>
+        <validationRegExp/>
+        <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
+      </linkPrefix>
+      <propertiesToShow>
+        <cache>0</cache>
+        <disabled>0</disabled>
+        <displayType>input</displayType>
+        <multiSelect>1</multiSelect>
+        <name>propertiesToShow</name>
+        <number>6</number>
+        <picker>0</picker>
+        <prettyName>propertiesToShow</prettyName>
+        <relationalStorage>1</relationalStorage>
+        <separator> </separator>
+        <separators> ,|</separators>
+        <size>20</size>
+        <sort>none</sort>
+        <unmodifiable>0</unmodifiable>
+        <validationMessage/>
+        <validationRegExp/>
+        <values/>
+        <classType>com.xpn.xwiki.objects.classes.StaticListClass</classType>
+      </propertiesToShow>
+    </class>
+    <name>XWiki.AdminRatingsSheet</name>
+    <number>0</number>
+    <className>XWiki.ConfigurableClass</className>
+    <guid>5adc1365-63ad-4faf-99f3-68df7ac5eff9</guid>
+    <property>
+      <codeToExecute/>
+    </property>
+    <property>
+      <configurationClass/>
+    </property>
+    <property>
+      <configureGlobally>1</configureGlobally>
+    </property>
+    <property>
+      <displayInSection>Ratings</displayInSection>
+    </property>
+    <property>
+      <heading/>
+    </property>
+    <property>
+      <iconAttachment>ratings.png</iconAttachment>
+    </property>
+    <property>
+      <linkPrefix/>
+    </property>
+    <property>
+      <propertiesToShow/>
+    </property>
+  </object>
   <object>
     <class>
       <name>XWiki.JavaScriptExtension</name>
@@ -1359,53 +1508,40 @@ UbDOu/dbeVpO7n9P2wv/HNtYCnD0+2baAAAAAElFTkSuQmCC</content>
       <cache>default</cache>
     </property>
     <property>
-      <code>var ratingsMessage = "$msg.get('admin.ratings')";
-
-// If the rendered page is the administration page, we inject the ratings category.
-document.observe("xwiki:dom:loaded", function() 
-{ 
-  if ($("admin-icons") &amp;&amp; ratingsMessage != "admin.ratings") {  
-     // In administration + translations added
-     Element.insert($("admin-icons"), { 
-           bottom:  "&lt;li class='Ratings'&gt;&lt;a href=\"$xwiki.getURL('XWiki.XWikiPreferences','admin','editor=globaladmin&amp;section=Ratings')\"&gt;"
-                 +  "&lt;span&gt;&lt;img src=\"$xwiki.getDocument('XWiki.AdminRatingsSheet').getAttachmentURL('ratings.png')\"&gt;" + ratingsMessage + "&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;"
-     });
-  }
-
+      <code>document.observe('xwiki:dom:loaded', function()
+{
   if ($('saveratingsactivation')) {
-    Event.observe($('saveratingsactivation'),"click", function() {
+    Event.observe($('saveratingsactivation'), 'click', function(event) {
+      event.stop();
 
-     if ($('activateratings').checked) {
-       var url = "$xwiki.getURL('XWiki.AdminRatingsSheet', 'view', 'xpage=plain&amp;action=activateratings')";
-     }
-     else {
-       var url = "$xwiki.getURL('XWiki.AdminRatingsSheet', 'view', 'xpage=plain&amp;action=deactivateratings')";
-     }
-     new Ajax.Request(url, {
-       method: 'get',
-       onLoading: function() {
-        $('activationstatus').innerHTML = "Activating ratings...";
-       },
-       onSuccess: function(transport)
-       {
-         $('activationstatus').innerHTML = transport.responseText;
-       }
-     });
+      if ($('activateratings').checked) {
+        var url = "$xwiki.getURL('XWiki.AdminRatingsSheet', 'view', 'outputSyntax=plain&amp;xpage=plain&amp;saveratingsactivation=Save&amp;activateratings=on')";
+      }
+      else {
+        var url = "$xwiki.getURL('XWiki.AdminRatingsSheet', 'view', 'outputSyntax=plain&amp;xpage=plain&amp;saveratingsactivation=Save&amp;activateratings=off')";
+      }
+      new Ajax.Request(url, {
+        method: 'get',
+        onLoading: function() {
+          $('activationstatus').innerHTML = "$msg.get('admin.ratings.activating')";
+        },
+        onSuccess: function(transport)
+        {
+          $('activationstatus').innerHTML = transport.responseText;
+        }
+      });
     });
-
   }
-
-});
-</code>
+});</code>
     </property>
     <property>
-      <name>Inject Ratings category in Administration</name>
+      <name>Ratings Administration</name>
     </property>
     <property>
       <parse>1</parse>
     </property>
     <property>
-      <use>always</use>
+      <use>onDemand</use>
     </property>
   </object>
   <object>
@@ -1502,109 +1638,94 @@ document.observe("xwiki:dom:loaded", function()
       <parse>1</parse>
     </property>
     <property>
-      <use>always</use>
+      <use>onDemand</use>
     </property>
   </object>
-  <object>
-    <class>
-      <name>XWiki.TagClass</name>
-      <customClass/>
-      <customMapping/>
-      <defaultViewSheet/>
-      <defaultEditSheet/>
-      <defaultWeb/>
-      <nameField/>
-      <validationScript/>
-      <tags>
-        <cache>0</cache>
-        <disabled>0</disabled>
-        <displayType>input</displayType>
-        <multiSelect>1</multiSelect>
-        <name>tags</name>
-        <number>1</number>
-        <prettyName>Tags</prettyName>
-        <relationalStorage>1</relationalStorage>
-        <separator>|</separator>
-        <separators>|,</separators>
-        <size>30</size>
-        <unmodifiable>0</unmodifiable>
-        <values/>
-        <classType>com.xpn.xwiki.objects.classes.StaticListClass</classType>
-      </tags>
-    </class>
-    <name>XWiki.AdminRatingsSheet</name>
-    <number>0</number>
-    <className>XWiki.TagClass</className>
-    <guid>fc290c0d-0880-4335-839c-15fdbab21cd6</guid>
-    <property>
-      <tags/>
-    </property>
-  </object>
-  <content>#if(!$request.xpage || "$request.xpage"!="plain")
-$xwiki.ssx.use("XWiki.Ratings") 
-$xwiki.jsx.use("XWiki.Ratings") 
-#set($ratingsdoc = $xwiki.getDocument("XWiki.Ratings"))
-#set($ratingsjsx = $ratingsdoc.getObject("XWiki.JavaScriptExtension"))
-#if($ratingsjsx.getProperty("use").value.equals("always")) #set($isActivated=true) #else #set($isActivated=false) #end
-&lt;form id="ratingsactivation" style="float:left;width:50%;margin-right:20px"&gt;
- &lt;fieldset class="ratings"&gt;
-  &lt;legend class="header"&gt;Ratings activation&lt;/legend&gt;
-  &lt;p&gt;
-    &lt;input type="checkbox" id="activateratings" #if($isActivated)checked="checked"#end/&gt;&lt;label for="activateratings" class="ratings"&gt;$msg.get('admin.ratings.activateratings')&lt;/label&gt;
-    #info("$msg.get('admin.ratings.activateratingsinfo')")
-  &lt;/p&gt;
- &lt;/fieldset&gt;
-  &lt;div class="bottombuttons"&gt;
-     &lt;p class="admin-buttons"&gt;
-        &lt;span class="buttonwrapper"&gt;
-          &lt;button id="saveratingsactivation" type="button"&gt;$msg.get("admin.save")&lt;/button&gt;
-        &lt;/span&gt;
-        &lt;span id="activationstatus"&gt;&lt;/span&gt;
-     &lt;/p&gt;
-   &lt;/div&gt; ## bottombuttons
-&lt;/form&gt;
-&lt;div&gt;
-{image:ratingspreview.png}
-&lt;/div&gt;
-&lt;div class="clearfloats"&gt;&lt;/div&gt;
-#*
-&lt;form id="resetratings"&gt;
- &lt;fieldset class="ratings"&gt;
-  &lt;legend class="header"&gt;Reset ratings on this wiki&lt;/legend&gt;
-  &lt;p&gt;
-    #warning("$msg.get('admin.ratings.resetratings')")
-    &lt;span class="buttonwrapper"&gt;&lt;button type="submit"&gt;Reset ratings&lt;/button&gt;&lt;/span&gt;
-  &lt;/p&gt;
- &lt;/fieldset&gt;
-&lt;/form&gt;
-&lt;form id="uninstallratings"&gt;
- &lt;fieldset class="ratings"&gt;
-  &lt;legend class="header"&gt;Uninstall the ratings application&lt;/legend&gt;
-  &lt;p&gt;
-    #warning("$msg.get('admin.ratings.uninstallratings')")
-    &lt;span class="buttonwrapper"&gt;&lt;button type="submit"&gt;Uninstall&lt;/button&gt;&lt;/span&gt;
-  &lt;/p&gt;
- &lt;/fieldset&gt;
-&lt;/form&gt;
-*#
+  <content>{{velocity}}
+#set ($ratingsdoc = $xwiki.getDocument('XWiki.Ratings'))
+#set ($ratingsjsx = $ratingsdoc.getObject('XWiki.JavaScriptExtension'))
+#set ($ratingsssx = $ratingsdoc.getObject('XWiki.StyleSheetExtension'))
+#set ($isActivated = $ratingsjsx.getProperty('use').value.equals('always'))
+##
+#if ("$!request.saveratingsactivation" != '')
+  ##
+  ## Process the request
+  #set ($needsUpdate = false)
+  #if ("$!request.activateratings" == 'on')
+    #if (!$isActivated)
+      #set ($discard = $ratingsjsx.set('use', 'always'))
+      #set ($discard = $ratingsssx.set('use', 'always'))
+      #set ($needsUpdate = true)
+    #end
+    #set ($message = $msg.get('admin.ratings.ratingsactivated'))
+  #else
+    #if ($isActivated)
+      #set ($discard = $ratingsjsx.set('use', 'onDemand'))
+      #set ($discard = $ratingsssx.set('use', 'onDemand'))
+      #set ($needsUpdate = true)
+    #end
+    #set ($message = $msg.get('admin.ratings.ratingsdeactivated'))
+  #end
+  #if ($needsUpdate)
+    #set ($discard = $!ratingsdoc.saveWithProgrammingRights($message, true))
+  #end
+  #if ($request.xredirect)
+    ## If it's not an AJAX call, follow the xredirect.
+    $response.sendRedirect($request.xredirect);
+  #else
+    ## If it's an AJAX call, return the status message.
+    $message
+  #end
 #else
- #if("$request.action"=="activateratings" || "$request.action"=="deactivateratings")
-   #set($ratingsdoc = $xwiki.getDocument("XWiki.Ratings"))
-   #set($ratingsjsx = $ratingsdoc.getObject("XWiki.JavaScriptExtension"))
-   #set($ratingsssx = $ratingsdoc.getObject("XWiki.StyleSheetExtension"))
-   #if("$request.action"=="activateratings")
-     #set($ok = $ratingsjsx.set("use","always"))
-     #set($ok = $ratingsssx.set("use","always"))
-     #set($message=$msg.get('admin.ratings.ratingsactivated'))
-   #else
-     #set($ok = $!ratingsjsx.set("use","onDemand"))
-     #set($ok = $!ratingsssx.set("use","onDemand"))
-     #set($message=$msg.get('admin.ratings.ratingsdeactivated'))
-   #end
-     #set($ok = $!ratingsdoc.saveWithProgrammingRights())
-$message
- #else
-$msg.get('admin.ratings.illegalrequest')
- #end
-#end</content>
+  ##
+  ## Display the UI
+  #set ($discard = $xwiki.jsx.use('XWiki.AdminRatingsSheet'))
+  #set ($discard = $xwiki.ssx.use('XWiki.AdminRatingsSheet'))
+  {{html wiki='true' clean='false'}}
+  &lt;form action="$xwiki.getURL('XWiki.AdminRatingsSheet')" id='ratingsactivation' style='float:left;width:50%;margin-right:20px' class='xform'&gt;
+    &lt;fieldset class='ratings'&gt;
+      &lt;legend class='header'&gt;$msg.get('admin.ratings.activateTitle')&lt;/legend&gt;
+      &lt;p&gt;
+        &lt;input type='checkbox' name='activateratings' id='activateratings' #if($isActivated)checked='checked'#end/&gt;&lt;label for='activateratings' class='ratings'&gt;$msg.get('admin.ratings.activateratings')&lt;/label&gt;
+      &lt;/p&gt;
+      ((({{info}}$msg.get('admin.ratings.activateratingsinfo'){{/info}})))
+    &lt;/fieldset&gt;
+    &lt;div class='bottombuttons'&gt;
+      &lt;p class='admin-buttons'&gt;
+        &lt;span class='buttonwrapper'&gt;
+          &lt;input type='submit' name='saveratingsactivation' id='saveratingsactivation' class='button' value="$msg.get('admin.save')" /&gt;
+        &lt;/span&gt;
+        &lt;span id='activationstatus'&gt;&lt;/span&gt;
+      &lt;/p&gt;
+    &lt;/div&gt; ## bottombuttons
+    &lt;input type='hidden' name='xredirect' value="$doc.getURL()" /&gt;
+  &lt;/form&gt;
+  &lt;div&gt;
+    image:XWiki.AdminRatingsSheet@ratingspreview.png
+  &lt;/div&gt;
+  &lt;div class='clearfloats'&gt;&lt;/div&gt;
+  #*
+  &lt;form id="resetratings"&gt;
+  &lt;fieldset class="ratings"&gt;
+    &lt;legend class="header"&gt;Reset ratings on this wiki&lt;/legend&gt;
+    &lt;p&gt;
+      #warning("$msg.get('admin.ratings.resetratings')")
+      &lt;span class="buttonwrapper"&gt;&lt;button type="submit"&gt;Reset ratings&lt;/button&gt;&lt;/span&gt;
+    &lt;/p&gt;
+  &lt;/fieldset&gt;
+  &lt;/form&gt;
+  &lt;form id="uninstallratings"&gt;
+  &lt;fieldset class="ratings"&gt;
+    &lt;legend class="header"&gt;Uninstall the ratings application&lt;/legend&gt;
+    &lt;p&gt;
+      #warning("$msg.get('admin.ratings.uninstallratings')")
+      &lt;span class="buttonwrapper"&gt;&lt;button type="submit"&gt;Uninstall&lt;/button&gt;&lt;/span&gt;
+    &lt;/p&gt;
+  &lt;/fieldset&gt;
+  &lt;/form&gt;
+  *#
+  {{/html}}
+#end
+{{/velocity}}
+</content>
 </xwikidoc>
