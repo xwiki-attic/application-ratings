@@ -271,7 +271,7 @@ document.observe('xwiki:dom:loaded', function(){
       <parse>1</parse>
     </property>
     <property>
-      <use>always</use>
+      <use>onDemand</use>
     </property>
   </object>
   <object>
@@ -461,7 +461,7 @@ div.ratingWrapper ul.rating {
       <parse>1</parse>
     </property>
     <property>
-      <use>always</use>
+      <use>onDemand</use>
     </property>
   </object>
   <content>{{velocity}}

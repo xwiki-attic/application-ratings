@@ -30,20 +30,6 @@
         </executions>
         <configuration>
           <transformationSets>
-            <!-- Make sure the extensions in the ratings admin sheet are always used, in order for the rating admin category
-                 to appear in the wiki administration menu when importing this application XAR.
-                  -->
-            <transformationSet>
-              <dir>src/main/resources</dir>
-              <outputDir>${project.build.outputDirectory}</outputDir>
-              <includes>
-                <include>XWiki/AdminRatingsSheet</include>
-              </includes>
-              <stylesheet>src/main/build/transformation/sx-always.xsl</stylesheet>
-            </transformationSet>
-            <!-- Make sure the extensions in XWiki.Ratings are not used always by default, so that the default behavior when
-                 importing the XAR is that ratings are not activated. (They can be activated through the Ratings admin category))
-                 --> 
             <transformationSet>
               <dir>src/main/resources</dir>
               <outputDir>${project.build.outputDirectory}</outputDir>
