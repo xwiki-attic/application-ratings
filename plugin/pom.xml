@@ -29,13 +29,21 @@
     <artifactId>xwiki-ratings</artifactId>
     <version>1.3-SNAPSHOT</version>
   </parent>
+  
   <artifactId>xwiki-ratings-plugin</artifactId>
+  
   <name>XWiki Platform - Ratings - Plugin</name>
   <description>XWiki Platform - Plugins - Ratings</description>
+  
   <dependencies>
     <dependency>
       <groupId>org.xwiki.platform</groupId>
       <artifactId>xwiki-platform-oldcore</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.platform</groupId>
+      <artifactId>xwiki-platform-eventstream</artifactId>
+      <version>4.2-SNAPSHOT</version>
     </dependency>
   </dependencies>
 </project>

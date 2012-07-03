@@ -19,6 +19,7 @@
  */
 package com.xpn.xwiki.plugin.ratings.internal;
 
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
@@ -30,12 +31,22 @@ import org.xwiki.component.manager.ComponentLookupException;
 import org.xwiki.component.manager.ComponentManager;
 import org.xwiki.component.phase.InitializationException;
 import org.xwiki.context.Execution;
+import org.xwiki.eventstream.Event;
+import org.xwiki.eventstream.EventFactory;
+import org.xwiki.eventstream.EventStream;
+import org.xwiki.model.EntityType;
+import org.xwiki.model.reference.DocumentReference;
+import org.xwiki.model.reference.DocumentReferenceResolver;
+import org.xwiki.model.reference.EntityReference;
+import org.xwiki.model.reference.EntityReferenceSerializer;
+import org.xwiki.rendering.syntax.Syntax;
 
 import com.xpn.xwiki.XWiki;
 import com.xpn.xwiki.XWikiContext;
 import com.xpn.xwiki.XWikiException;
 import com.xpn.xwiki.doc.XWikiDocument;
 import com.xpn.xwiki.objects.BaseObject;
+import com.xpn.xwiki.objects.BaseObjectReference;
 import com.xpn.xwiki.objects.classes.BaseClass;
 import com.xpn.xwiki.plugin.ratings.AverageRating;
 import com.xpn.xwiki.plugin.ratings.Rating;
@@ -61,14 +72,28 @@ public abstract class AbstractRatingsManager implements RatingsManager
     protected Logger logger;
 
     @Inject
-    private Execution execution;
+    protected Execution execution;
 
     @Inject
-    private ComponentManager componentManager;
+    protected ComponentManager componentManager;
 
-    private ReputationAlgorithm reputationAlgorithm;
+    /** The event stream used for storing events. */
+    @Inject
+    protected EventStream eventStream;
 
-    private String reputationAlgorithmVersion;
+    /** The default factory for creating event objects. */
+    @Inject
+    protected EventFactory factory;
+
+    @Inject
+    protected DocumentReferenceResolver<String> resolver;
+
+    @Inject
+    protected EntityReferenceSerializer<String> serializer;
+
+    protected ReputationAlgorithm reputationAlgorithm;
+
+    protected String reputationAlgorithmVersion;
 
     public String getRatingsClassName()
     {
@@ -591,5 +616,50 @@ public abstract class AbstractRatingsManager implements RatingsManager
     protected XWikiContext getXWikiContext()
     {
         return (XWikiContext) execution.getContext().getProperty("xwikicontext");
+    }
+
+    public void fireRatingActivityEvent(String ratingEventType, Rating rating)
+    {
+        String documentName = rating.getDocumentName();
+        DocumentReference documentReference = resolver.resolve(documentName);
+        XWikiContext context = getXWikiContext();
+        XWiki xwiki = context.getWiki();
+
+        DocumentReference ratingsClassReference = resolver.resolve(getRatingsClassName());
+
+        Event event = factory.createEvent();
+        event.setUser(context.getUserReference());
+        event.setApplication("Ratings");
+        event.setType(ratingEventType);
+        event.setTitle(String.format("A rating has been assigned for the document \"{}\"", documentName));
+
+        event.setStream(serializer.serialize(documentReference));
+
+        event.setWiki(documentReference.getWikiReference());
+        try {
+            event.setUrl(new URL(xwiki.getExternalURL(documentName, "view", context)));
+        } catch (Exception e) {
+            logger.error("Failed to get the rating event's URL.", e);
+        }
+        event.setSpace(documentReference.getLastSpaceReference());
+        event.setDocument(documentReference);
+        try {
+            XWikiDocument document = xwiki.getDocument(documentReference, context);
+            event.setDocumentVersion(document.getVersion());
+            event.setDocumentTitle(document.getRenderedTitle(Syntax.PLAIN_1_0, context));
+        } catch (Exception e) {
+            logger.error("Failed to set the rating event's document information", e);
+        }
+
+        try {
+            event.setRelatedEntity(new BaseObjectReference(ratingsClassReference, rating.getAsObject().getNumber(),
+                documentReference));
+        } catch (Exception e) {
+            logger.error("Failed to set the rating event's related information", e);
+        }
+
+        event.setBody(String.valueOf(rating.getVote()));
+        event.setImportance(Event.Importance.MINOR);
+        eventStream.addEvent(event);
     }
 }

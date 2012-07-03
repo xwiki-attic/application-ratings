@@ -73,6 +73,9 @@ public class StoredAverageRating implements AverageRating
         object.setStringValue(RatingsManager.AVERAGERATING_CLASS_FIELDNAME_AVERAGEVOTE_METHOD, method);
     }
 
+    /**
+     * FIXME: move all this save logic from the ratings to the manager. Move towards fly-weight ratings.
+     */
     public void save(XWikiContext context) throws RatingsException
     {
         try {
@@ -86,7 +89,10 @@ public class StoredAverageRating implements AverageRating
             // to
             // note a document, which service will only set the rating, so the behavior will be correct.
             document.setContentDirty(false);
-            context.getWiki().saveDocument(document, context);
+
+            String saveMessage = "Computed average rating";
+
+            context.getWiki().saveDocument(document, saveMessage, true, context);
         } catch (XWikiException e) {
             throw new RatingsException(e);
         }

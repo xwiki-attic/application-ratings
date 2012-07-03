@@ -27,6 +27,7 @@ import com.xpn.xwiki.doc.XWikiDocument;
 import com.xpn.xwiki.objects.BaseObject;
 import com.xpn.xwiki.objects.BaseProperty;
 import com.xpn.xwiki.plugin.ratings.Rating;
+import com.xpn.xwiki.plugin.ratings.RatingEventType;
 import com.xpn.xwiki.plugin.ratings.RatingsException;
 import com.xpn.xwiki.plugin.ratings.RatingsManager;
 
@@ -90,7 +91,7 @@ public class DefaultRating implements Rating
      */
     public String getGlobalRatingId()
     {
-        return String.format("%s:%s", document.getFullName(), ":", object.getNumber());
+        return String.format("%s:%s", document.getFullName(), String.valueOf(object.getNumber()));
     }
 
     public BaseObject getAsObject()
@@ -165,6 +166,10 @@ public class DefaultRating implements Rating
         return this.documentName;
     }
 
+    /**
+     * FIXME: Need refactoring. Move all this save logic from the ratings to the manager. Move towards fly-weight
+     * ratings.
+     */
     @Override
     public void save() throws RatingsException
     {
@@ -179,7 +184,19 @@ public class DefaultRating implements Rating
             // to
             // note a document, which service will only set the rating, so the behavior will be correct.
             getDocument().setContentDirty(false);
-            context.getWiki().saveDocument(getDocument(), context);
+
+            String ratingsClassName = getRatingsManager().getRatingsClassName();
+            String saveMessage = "Added rating";
+            String ratingEventType = RatingEventType.ADD_RATING;
+            if (getDocument().getOriginalDocument().getObject(ratingsClassName, object.getNumber()) != null) {
+                saveMessage = "Updated rating";
+                ratingEventType = RatingEventType.UPDATE_RATING;
+            }
+
+            context.getWiki().saveDocument(getDocument(), saveMessage, true, context);
+
+            // Log the event in the eventstream.
+            ((AbstractRatingsManager) getRatingsManager()).fireRatingActivityEvent(ratingEventType, this);
         } catch (XWikiException e) {
             throw new RatingsException(e);
         }
@@ -201,7 +218,11 @@ public class DefaultRating implements Rating
             } else {
                 // save is needed to remove effectively
                 if (withSave) {
-                    context.getWiki().saveDocument(doc, context);
+                    context.getWiki().saveDocument(doc, "Removed rating", true, context);
+
+                    // Log the event in the eventstream.
+                    ((AbstractRatingsManager) getRatingsManager()).fireRatingActivityEvent(
+                        RatingEventType.DELETE_RATING, this);
                 }
                 return true;
             }
