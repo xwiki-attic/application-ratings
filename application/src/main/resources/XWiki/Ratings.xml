@@ -250,7 +250,7 @@ FpZXOBFhKaEAS2dw0E1Ct+7yAgtxinBDuXUhALRZa1Kh/xEIAJrGTBMAKmCggU0QYNF5TRhYQxMy
 })(XWiki || {});
 
 document.observe('xwiki:dom:loaded', function(){
-  if (XWiki.contextaction == 'view' &amp;&amp; XWiki.currentDocument.space != 'XWiki') {
+  if (XWiki.contextaction == 'view'/* &amp;&amp; XWiki.currentDocument.space != 'XWiki'*/) {
     // FIXME : find a better discrimination strategy than not in XWiki space
     // (probably should be config parameter(s) in the ratings administration)
 
@@ -468,10 +468,15 @@ div.ratingWrapper ul.rating {
 #**
  * Macro that displays the rating for a document
  *#
-#macro(displayDocumentRating $document)
+#macro (displayDocumentRating $document)
 #set ($averageRating = $services.ratings.getAverageRating($document))
 #set ($userRating = $services.ratings.getRating($document, $context.user))
 #set ($displayedWidth = $mathtool.mul($averageRating.averageVote, 20))
+##
+## TODO: Do better than this. Create a RatingsConfig page and define there what can and can not be rated.
+#set ($isDocumentOwner = ($document.creator == $xcontext.user) || ($document.getObject('XWiki.XWikiUsers') &amp;&amp; $document.fullName == $xcontext.user))
+#set ($canRate = !$isDocumentOwner)
+##
 &lt;div class='ratingContainer'&gt;
   &lt;div class='averageRating'&gt;
     &lt;ul class='rating'&gt;
@@ -480,7 +485,7 @@ div.ratingWrapper ul.rating {
       #foreach ($r in [1..5])
         #set ($ratingClass = $ratingClasses.get($mathtool.sub($r, 1)))
         &lt;li&gt;
-          #if ($document.hasAccessLevel('edit'))
+          #if ($canRate)
             &lt;a href='#' title="$msg.get("rating.${ratingClass}")" class="$ratingClass star"&gt;$r&lt;/a&gt;
           #end
         &lt;/li&gt;
@@ -497,7 +502,9 @@ div.ratingWrapper ul.rating {
     &lt;span class='yourVote'&gt;
       #if ($context.user == 'XWiki.XWikiGuest')
         $msg.get('rating.loginToVote')
-      #elseif (!$document.hasAccessLevel('edit'))
+      #elseif ($isDocumentOwner)
+        $msg.get('rating.notAllowedOnYourDocument')
+      #elseif (!$canRate)
         $msg.get('rating.notAllowedOnThisDocument')
       #elseif (!$userRating)
         $msg.get('rating.clickTheStarsToVote')
@@ -539,8 +546,8 @@ $response.setContentType('application/json')
         "error" : "$escapetool.javascript($msg.get('rating.voteoutofbounds'))"
     #end
 }
-  #elseif("${request.rating}" != '')
-    #set($ratedDoc=$xwiki.getDocument("$request.rating"))
+  #elseif ("$!{request.rating}" != '')
+    #set ($ratedDoc = $xwiki.getDocument($request.rating))
 
     {{html}}
     &lt;div class='ratingWrapper'&gt;
