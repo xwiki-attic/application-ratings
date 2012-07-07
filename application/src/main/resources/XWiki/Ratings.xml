@@ -475,7 +475,7 @@ div.ratingWrapper ul.rating {
 ##
 ## TODO: Do better than this. Create a RatingsConfig page and define there what can and can not be rated.
 #set ($isDocumentOwner = ($document.creator == $xcontext.user) || ($document.getObject('XWiki.XWikiUsers') &amp;&amp; $document.fullName == $xcontext.user))
-#set ($canRate = !$isDocumentOwner)
+#set ($canRate = !$isDocumentOwner &amp;&amp; !$isGuest)
 ##
 &lt;div class='ratingContainer'&gt;
   &lt;div class='averageRating'&gt;
