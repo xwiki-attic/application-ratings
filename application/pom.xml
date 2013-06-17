@@ -1,17 +1,31 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
-    <groupId>org.xwiki.contrib</groupId>
-    <artifactId>xwiki-ratings</artifactId>
+    <groupId>org.xwiki.contrib.ratings</groupId>
+    <artifactId>application-ratings</artifactId>
     <version>1.3-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>xwiki-ratings-application</artifactId>
+  <artifactId>application-ratings-ui</artifactId>
   <packaging>xar</packaging>
   <name>XWiki Platform - Ratings - Application</name>
   <description>Application that allows users to rate Wiki Document, and to browse pages by average rating</description>
   <build>
     <defaultGoal>install</defaultGoal>
-    <plugins>
+   <!-- Needed to add support for the XAR packaging -->
+   <extensions>
+     <extension>
+       <groupId>org.xwiki.commons</groupId>
+       <artifactId>xwiki-commons-tool-xar-handlers</artifactId>
+       <version>${commons.version}</version>
+     </extension>
+   </extensions>
+   <plugins>
+     <!-- The XAR packaging uses the XAR plugin and thus we need to define what version to use -->
+     <plugin>
+       <groupId>org.xwiki.commons</groupId>
+       <artifactId>xwiki-commons-tool-xar-plugin</artifactId>
+       <version>${commons.version}</version>
+     </plugin>
       <!-- Force the "use" field of JSX and CSS extensions to be the correct ones when building the final XAR.
            This is to avoid programmers mistakes, as it is very easy to forget to check they have the proper ones
            When commiting changes based on a XAR export.

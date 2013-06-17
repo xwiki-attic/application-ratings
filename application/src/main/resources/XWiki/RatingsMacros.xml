@@ -1,28 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <xwikidoc>
-<web>XWiki</web>
-<name>RatingsMacros</name>
-<language></language>
-<defaultLanguage>en</defaultLanguage>
-<translation>0</translation>
-<parent>XWiki.Ratings</parent>
-<creator>xwiki:XWiki.Admin</creator>
-<author>xwiki:XWiki.Admin</author>
-<customClass></customClass>
-<contentAuthor>xwiki:XWiki.Admin</contentAuthor>
-<creationDate>1356994800000</creationDate>
-<date>1356994800000</date>
-<contentUpdateDate>1356994800000</contentUpdateDate>
-<version>1.1</version>
-<title></title>
-<template></template>
-<defaultTemplate></defaultTemplate>
-<validationScript></validationScript>
-<comment></comment>
-<minorEdit>false</minorEdit>
-<syntaxId>xwiki/2.1</syntaxId>
-<hidden>false</hidden>
-<content>{{velocity output="false"}}
+  <web>XWiki</web>
+  <name>RatingsMacros</name>
+  <language/>
+  <defaultLanguage/>
+  <translation>0</translation>
+  <parent>XWiki.Ratings</parent>
+  <creator>xwiki:XWiki.Admin</creator>
+  <author>xwiki:XWiki.Admin</author>
+  <customClass/>
+  <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
+  <creationDate>1356994800000</creationDate>
+  <date>1356994800000</date>
+  <contentUpdateDate>1356994800000</contentUpdateDate>
+  <version>1.1</version>
+  <title/>
+  <template/>
+  <defaultTemplate/>
+  <validationScript/>
+  <comment/>
+  <minorEdit>false</minorEdit>
+  <syntaxId>xwiki/2.1</syntaxId>
+  <hidden>false</hidden>
+  <content>{{velocity output="false"}}
 ###
 ###    Display rating stars UI
 ###
@@ -86,4 +87,5 @@
 {{/html}}
 #end
 
-{{/velocity}}</content></xwikidoc>
+{{/velocity}}</content>
+</xwikidoc>
