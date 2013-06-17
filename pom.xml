@@ -1,16 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+ *
+ * See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ *
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
-    <groupId>org.xwiki.platform</groupId>
-    <artifactId>xwiki-platform-core</artifactId>
-    <version>3.1</version>
+   <groupId>org.xwiki.commons</groupId>
+   <artifactId>xwiki-commons-pom</artifactId>
+   <version>4.5.4</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.xwiki.contrib</groupId>
-  <artifactId>xwiki-ratings</artifactId>
+  <groupId>org.xwiki.contrib.ratings</groupId>
+  <artifactId>application-ratings</artifactId>
   <packaging>pom</packaging>
   <name>XWiki Platform - Ratings</name>
   <version>1.3-SNAPSHOT</version>
   <description>Application that allows users to rate Wiki Document, and to browse pages by average rating</description>
+  <developers>
+    <developer>
+      <id>ldubost</id>
+      <name>Ludovic Dubost</name>
+    </developer>
+  </developers>
   <scm>
     <connection>scm:git:git://github.com/xwiki-contrib/application-ratings.git</connection>
     <developerConnection>scm:git:git@github.com:xwiki-contrib/application-ratings.git</developerConnection>
@@ -24,7 +53,7 @@
     </repository>
   </distributionManagement>
   <modules>
-    <module>plugin</module>
+    <module>api</module>
     <module>application</module>
   </modules>
   <build>
