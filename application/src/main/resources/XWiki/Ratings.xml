@@ -21,7 +21,7 @@
 <comment></comment>
 <minorEdit>false</minorEdit>
 <syntaxId>xwiki/2.1</syntaxId>
-<hidden>false</hidden><attachment>
+<hidden>true</hidden><attachment>
 <filename>star.gif</filename>
 <filesize>1120</filesize>
 <author>XWiki.Admin</author>

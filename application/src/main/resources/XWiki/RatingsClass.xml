@@ -21,7 +21,7 @@
 <comment></comment>
 <minorEdit>false</minorEdit>
 <syntaxId>xwiki/2.1</syntaxId>
-<hidden>false</hidden>
+<hidden>true</hidden>
 <class>
 <name>XWiki.RatingsClass</name>
 <customClass></customClass>

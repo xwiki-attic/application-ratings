@@ -21,7 +21,7 @@
 <comment></comment>
 <minorEdit>false</minorEdit>
 <syntaxId>xwiki/1.0</syntaxId>
-<hidden>false</hidden>
+<hidden>true</hidden>
 <object>
 <class>
 <name>XWiki.TranslationDocumentClass</name>
