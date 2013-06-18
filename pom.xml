@@ -37,8 +37,12 @@
   <description>Application that allows users to rate Wiki pages, and to browse them by average ratings</description>
   <developers>
     <developer>
+      <id>jvelo</id>
+      <name>Jerome Velociter (XWiki SAS)</name>
+    </developer>
+    <developer>
       <id>ldubost</id>
-      <name>Ludovic Dubost</name>
+      <name>Ludovic Dubost (XWiki SAS)</name>
     </developer>
   </developers>
   <scm>
