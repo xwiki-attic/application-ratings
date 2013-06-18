@@ -9,6 +9,14 @@
   <packaging>xar</packaging>
   <name>XWiki Platform - Ratings - Application</name>
   <description>Application that allows users to rate Wiki Document, and to browse pages by average rating</description>
+  <dependencies>
+    <dependency>
+      <groupId>org.xwiki.contrib.ratings</groupId>
+      <artifactId>application-ratings-api</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+  </dependencies>
   <build>
     <defaultGoal>install</defaultGoal>
    <!-- Needed to add support for the XAR packaging -->
