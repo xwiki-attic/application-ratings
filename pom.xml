@@ -38,11 +38,13 @@
   <developers>
     <developer>
       <id>jvelo</id>
-      <name>Jerome Velociter (XWiki SAS)</name>
+      <name>Jerome Velociter</name>
+      <organization>XWiki SAS</organization>
     </developer>
     <developer>
       <id>ldubost</id>
-      <name>Ludovic Dubost (XWiki SAS)</name>
+      <name>Ludovic Dubost</name>
+      <organization>XWiki SAS</organization>
     </developer>
   </developers>
   <scm>

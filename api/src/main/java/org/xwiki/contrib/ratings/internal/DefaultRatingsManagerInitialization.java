@@ -23,7 +23,7 @@ import com.xpn.xwiki.XWikiContext;
 import com.xpn.xwiki.doc.XWikiDocument;
 import com.xpn.xwiki.objects.classes.BaseClass;
 
-@Component
+@Component("ratingswikiinit")
 @Singleton
 public class DefaultRatingsManagerInitialization implements EventListener, Initializable
 {
@@ -73,9 +73,6 @@ public class DefaultRatingsManagerInitialization implements EventListener, Initi
     @Override
     public void initialize() throws InitializationException
     {
-        // making sure the classes exist in main wiki
-        initRatingsClass();
-        initAverageRatingsClass();        
     }
 
    
