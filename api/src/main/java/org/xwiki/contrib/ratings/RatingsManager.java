@@ -43,7 +43,7 @@ public interface RatingsManager
     public static final String RATINGS_CONFIG_PAGE = "XWiki.RatingsConfig";
     public static final String RATINGS_CONFIG_CLASSNAME = "XWiki.RatingsConfigClass";
     public static final String RATINGS_CONFIG_FIELDNAME_MANAGER_HINT = "managerHint";
-    public static final String RATINGS_CONFIG_FIELDNAME_REPUTATIONALGORITHM_HINT = "managerHint";
+    public static final String RATINGS_CONFIG_FIELDNAME_REPUTATIONALGORITHM_HINT = "reputationAlgorithmHint";
  
     String getRatingsClassName();
 
