@@ -33,7 +33,7 @@
   <artifactId>application-ratings</artifactId>
   <packaging>pom</packaging>
   <name>XWiki Platform - Ratings</name>
-  <version>1.3-SNAPSHOT</version>
+  <version>1.4-SNAPSHOT</version>
   <description>Application that allows users to rate Wiki pages, and to browse them by average ratings</description>
   <developers>
     <developer>
