@@ -6,6 +6,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
+import javax.inject.Named;
 
 import org.xwiki.bridge.event.WikiReadyEvent;
 import org.xwiki.component.annotation.Component;
@@ -15,7 +16,7 @@ import org.xwiki.observation.EventListener;
 import org.xwiki.observation.event.Event;
 
 
-@Component("updatereputation")
+@Named("updatereputation")
 @Singleton
 public class UpdateReputationListener implements EventListener
 {

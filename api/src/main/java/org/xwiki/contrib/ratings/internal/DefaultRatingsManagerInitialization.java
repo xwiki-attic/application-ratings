@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.inject.Named;
 
 import org.slf4j.Logger;
 
@@ -23,7 +24,7 @@ import com.xpn.xwiki.XWikiContext;
 import com.xpn.xwiki.doc.XWikiDocument;
 import com.xpn.xwiki.objects.classes.BaseClass;
 
-@Component("ratingswikiinit")
+@Named("ratingswikiinit")
 @Singleton
 public class DefaultRatingsManagerInitialization implements EventListener, Initializable
 {
