@@ -490,7 +490,7 @@ position: relative;
     #set($rdoc = $xwiki.getDocument($request.doc))
     #set($vote = $util.parseInt($request.vote))
     #if($vote &gt; 0 &amp;&amp; $vote &lt;= 5)
-      #set($ok = $services.ratings.setRating($rdoc, $context.user, $vote))
+      #set($ok = $services.ratings.setRating($rdoc, $xcontext.user, $vote))
       #if($ok) 
         #if("$!{request.method}" != "")
           #set($ar = $services.ratings.getAverageRating($rdoc, $request.method))
@@ -498,7 +498,7 @@ position: relative;
           #set($ar = $services.ratings.getAverageRating($rdoc))
         #end
         #set($avgvote = $ar.averageVote)
-        #set($uservote = $services.ratings.getRating($rdoc, $context.user))
+        #set($uservote = $services.ratings.getRating($rdoc, $xcontext.user))
         #set($nbVotes = $ar.nbVotes)
        $response.setContentType('application/json')
        {"avgvote" : "${avgvote}", "uservote" :  "${uservote.vote}", "totalvotes" : "${nbVotes}" }

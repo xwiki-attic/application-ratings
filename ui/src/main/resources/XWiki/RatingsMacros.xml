@@ -56,10 +56,10 @@
 #if($method != "")  #set($ar = $services.ratings.getAverageRating($rdoc, $method))
 #else  #set($ar = $services.ratings.getAverageRating($rdoc)) #end
 #set($avgvote = $ar.averageVote)
-#set($uservote = $services.ratings.getRating($rdoc, $context.user).vote)
+#set($uservote = $services.ratings.getRating($rdoc, $xcontext.user).vote)
 #set($votes = $!ar.nbVotes)
 &lt;div class="rating-wrapper" id="rating-${rdoc.fullName}"&gt;
-#if($context.user!="XWiki.XWikiGuest")
+#if($xcontext.user!="XWiki.XWikiGuest")
 &lt;div class="avg-rating"&gt;
 #ratingstars($id "" "" $avgvote $votes false)
 &lt;/div&gt;
