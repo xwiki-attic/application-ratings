@@ -24,6 +24,7 @@ import com.xpn.xwiki.XWikiContext;
 import com.xpn.xwiki.doc.XWikiDocument;
 import com.xpn.xwiki.objects.classes.BaseClass;
 
+@Component
 @Named("ratingswikiinit")
 @Singleton
 public class DefaultRatingsManagerInitialization implements EventListener, Initializable

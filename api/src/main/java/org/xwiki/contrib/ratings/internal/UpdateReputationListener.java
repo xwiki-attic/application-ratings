@@ -16,6 +16,7 @@ import org.xwiki.observation.EventListener;
 import org.xwiki.observation.event.Event;
 
 
+@Component
 @Named("updatereputation")
 @Singleton
 public class UpdateReputationListener implements EventListener
