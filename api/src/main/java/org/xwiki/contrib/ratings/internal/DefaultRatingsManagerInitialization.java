@@ -115,8 +115,8 @@ public class DefaultRatingsManagerInitialization implements EventListener, Initi
             doc.setParent("XWiki.XWikiClasses");
         }
 
-        String content = doc.getContent();
-        if ((content == null) || (content.equals(""))) {
+        String title = doc.getTitle();
+        if ((title == null) || (title.equals(""))) {
             needsUpdate = true;
             doc.setTitle("XWiki Average Ratings Class");
         }
@@ -159,8 +159,8 @@ public class DefaultRatingsManagerInitialization implements EventListener, Initi
             doc.setParent("XWiki.XWikiClasses");
         }
 
-        String content = doc.getContent();
-        if ((content == null) || (content.equals(""))) {
+        String title = doc.getTitle();
+        if ((title == null) || (title.equals(""))) {
             needsUpdate = true;
             doc.setTitle("XWiki Ratings Class");
         }
