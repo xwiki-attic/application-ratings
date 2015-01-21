@@ -27,7 +27,7 @@
   <parent>
     <groupId>org.xwiki.contrib.ratings</groupId>
     <artifactId>application-ratings</artifactId>
-    <version>1.3.2-SNAPSHOT</version>
+    <version>1.3.2</version>
   </parent>
   <artifactId>application-ratings-ui</artifactId>
   <packaging>xar</packaging>
