@@ -121,6 +121,11 @@ public class DefaultRatingsManagerInitialization implements EventListener, Initi
             doc.setTitle("XWiki Average Ratings Class");
         }
 
+        if (!doc.isHidden()) {
+            needsUpdate = true;
+            doc.setHidden(true);
+        }
+
         if (needsUpdate) {
             bclass.setName(averageRatingsClassName);
             xwiki.saveDocument(doc, getXWikiContext());
@@ -163,6 +168,11 @@ public class DefaultRatingsManagerInitialization implements EventListener, Initi
         if ((title == null) || (title.equals(""))) {
             needsUpdate = true;
             doc.setTitle("XWiki Ratings Class");
+        }
+
+        if (!doc.isHidden()) {
+            needsUpdate = true;
+            doc.setHidden(true);
         }
 
         if (needsUpdate) {
