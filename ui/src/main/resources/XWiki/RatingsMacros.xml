@@ -38,11 +38,11 @@
             #set($cls = ["one-star", "two-stars", "three-stars", "four-stars", "five-stars"])
             #foreach($r in [1..5])
                 #set($i = $r - 1)
-                &lt;li&gt;&lt;a href="#" title="$msg.get("rating.${cls.get($i)}")" class="$cls.get($i)"&gt;$r&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href="#" title="$services.localization.render("rating.${cls.get($i)}")" class="$cls.get($i)"&gt;$r&lt;/a&gt;&lt;/li&gt;
             #end
         &lt;/ul&gt;
     &lt;/div&gt;
-    &lt;div class="rating-message"&gt;#if($nbVotes != "")&lt;span&gt;$nbVotes&lt;/span&gt;&amp;nbsp;$msg.get("rating.votes")#end&lt;/div&gt;
+    &lt;div class="rating-message"&gt;#if($nbVotes != "")&lt;span&gt;$nbVotes&lt;/span&gt;&amp;nbsp;$services.localization.render("rating.votes")#end&lt;/div&gt;
 &lt;/div&gt;
 #end
 
@@ -66,7 +66,7 @@
 #else
  #set($loginurl = $xwiki.getURL("XWiki.XWikiLogin", "login", "xredirect=$rdoc.getURL()"))
 &lt;div class="avg-rating"&gt;
-#ratingstars($id "" $msg.get("rating.rate") $avgvote  $votes true)
+#ratingstars($id "" $services.localization.render("rating.rate") $avgvote  $votes true)
 &lt;/div&gt;
 #end
 &lt;/div&gt;

@@ -207,7 +207,7 @@ function showMsg(msgdiv, i)
  {
    if (msgdiv.prevmsg=="")
     msgdiv.prevmsg = msgdiv.innerHTML;
-   var msgs = ["$msg.get("rating.one-star")", "$msg.get("rating.two-stars")", "$msg.get("rating.three-stars")", "$msg.get("rating.four-stars")", "$msg.get("rating.five-stars")"];
+   var msgs = ["$services.localization.render("rating.one-star")", "$services.localization.render("rating.two-stars")", "$services.localization.render("rating.three-stars")", "$services.localization.render("rating.four-stars")", "$services.localization.render("rating.five-stars")"];
    msgdiv.update(msgs[i]);
  }
 }
@@ -488,7 +488,7 @@ position: relative;
 #if("$!{request.xpage}" == "plain")
   #if("$!{request.vote}" != "")
     #set($rdoc = $xwiki.getDocument($request.doc))
-    #set($vote = $util.parseInt($request.vote))
+    #set($vote = $mathtool.toInteger($request.vote))
     #if($vote &gt; 0 &amp;&amp; $vote &lt;= 5)
       #set($ok = $services.ratings.setRating($rdoc, $xcontext.user, $vote))
       #if($ok) 
@@ -503,12 +503,12 @@ position: relative;
        $response.setContentType('application/json')
        {"avgvote" : "${avgvote}", "uservote" :  "${uservote.vote}", "totalvotes" : "${nbVotes}" }
       #else 
-        $msg.get("rating.saveexception")
+        $services.localization.render("rating.saveexception")
       #end
     #elseif($vote == 0)
-      $msg.get("rating.votenotvalid")
+      $services.localization.render("rating.votenotvalid")
     #else
-      $msg.get("rating.voteoutofbounds")
+      $services.localization.render("rating.voteoutofbounds")
     #end
   #elseif("${request.rating}" != "")
     #set($ratedDoc=$xwiki.getDocument($request.rating))
