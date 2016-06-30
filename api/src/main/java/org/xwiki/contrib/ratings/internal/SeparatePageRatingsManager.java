@@ -145,7 +145,7 @@ public class SeparatePageRatingsManager extends AbstractRatingsManager
                 + "' and obj.id=parentprop.id.id and parentprop.id.name='"
                 + RATING_CLASS_FIELDNAME_PARENT
                 + "' and parentprop.value='"
-                + documentName
+                + documentName.replaceAll("'", "''")
                 +
                 "' and obj.name not in (select obj2.name from BaseObject as obj2, StringProperty as statusprop where obj2.className='"
                 + getRatingsClassName()
@@ -182,7 +182,7 @@ public class SeparatePageRatingsManager extends AbstractRatingsManager
                 + "' and obj.id=parentprop.id.id and parentprop.id.name='"
                 + RATING_CLASS_FIELDNAME_PARENT
                 + "' and parentprop.value='"
-                + documentName
+                + documentName.replaceAll("'", "''")
                 +
                 "' and obj.name not in (select obj2.name from BaseObject as obj2, StringProperty as statusprop where obj2.className='"
                 + getRatingsClassName()
