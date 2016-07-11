@@ -228,7 +228,7 @@ public class SeparatePageRating implements Rating
         boolean hasRatingsSpaceForeachSpace = ratingsManager.hasRatingsSpaceForeachSpace();
         if (hasRatingsSpaceForeachSpace) {
             return doc.getSpace() + ratingsSpace + "."
-                + getUniquePageName(doc.getSpace() + ratingsSpace, doc.getName(), "R", true);
+                + getUniquePageName(ratingsSpace, doc.getName(), "R", true);
         } else if (ratingsSpace == null) {
             return doc.getSpace() + "." + getUniquePageName(doc.getSpace(), doc.getName() + "R", "", true);
         } else {
